@@ -22,3 +22,5 @@ ABI generation: passed
 Reviewer guards: passed
 Authorization model: passed
 Fail-closed states: passed
+
+Frozen source commit: 69835a06e183493c671d74255261e1ab39b63db9
