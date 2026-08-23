@@ -1,0 +1,24 @@
+PolicyDelta Bradbury Candidate
+
+Contract SHA-256: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+
+Python:
+Python 3.12.14
+
+Installed verification packages:
+Name: genlayer-test
+Version: 0.29.2
+Name: genvm-linter
+Version: 0.11.0
+Name: pytest
+Version: 8.4.2
+
+Verification:
+Direct Mode: 22/22 passed
+GenVM lint: passed
+GenVM validation: passed
+Strict typecheck: 0 errors, 0 warnings
+ABI generation: passed
+Reviewer guards: passed
+Authorization model: passed
+Fail-closed states: passed

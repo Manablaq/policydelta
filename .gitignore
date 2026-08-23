@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.env.*
+!.env.example
+abi.json
+artifacts/
+node_modules/
+.next/
+*.before-*

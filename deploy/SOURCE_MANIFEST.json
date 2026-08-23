@@ -1,0 +1,11 @@
+{
+  "generated_at_utc": "2026-08-23T20:23:07.177187+00:00",
+  "contract_path": "contracts/policy_delta.py",
+  "contract_sha256": "a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2",
+  "deployment_network": "Bradbury Testnet",
+  "deployment_status": "NOT_DEPLOYED",
+  "contract_address": null,
+  "deployment_tx": null,
+  "explorer_url": null,
+  "repository_commit": null
+}
