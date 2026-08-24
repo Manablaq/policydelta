@@ -1,0 +1,178 @@
+{
+  "ctor": {
+    "params": [],
+    "kwparams": {}
+  },
+  "methods": {
+    "consent_to_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "version",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "create_policy": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "publisher",
+          "string"
+        ],
+        [
+          "initial_policy_text",
+          "string"
+        ],
+        [
+          "materiality_rules",
+          "string"
+        ],
+        [
+          "review_ttl_seconds",
+          "int"
+        ],
+        [
+          "consent_ttl_seconds",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "get_active_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": {
+        "$dict": "any"
+      }
+    },
+    "get_policy": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": {
+        "$dict": "any"
+      }
+    },
+    "get_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "version",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": {
+        "$dict": "any"
+      }
+    },
+    "is_version_authorized": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "version",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": true,
+      "ret": "bool"
+    },
+    "propose_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "new_policy_text",
+          "string"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "int",
+      "payable": false
+    },
+    "recover_expired_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "version",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "reject_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "version",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    },
+    "review_version": {
+      "params": [
+        [
+          "policy_id",
+          "string"
+        ],
+        [
+          "version",
+          "int"
+        ]
+      ],
+      "kwparams": {},
+      "readonly": false,
+      "ret": "null",
+      "payable": false
+    }
+  }
+}
