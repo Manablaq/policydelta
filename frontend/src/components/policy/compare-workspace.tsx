@@ -200,17 +200,17 @@ export function CompareWorkspace({
               </h2>
 
               <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                Choose an indexed policy and PolicyDelta will populate its real recorded version range from Bradbury. You can still enter any exact policy ID manually below.
+                Choose a policy discovered from this wallet&apos;s Bradbury history and PolicyDelta will populate its real recorded version range from Bradbury. You can still enter any exact policy ID manually below.
               </p>
             </div>
 
             <label className="block w-full lg:max-w-[360px]">
               <span className="mb-2 block text-xs font-semibold text-[var(--muted)]">
-                Your indexed policy
+                Your Bradbury policy
               </span>
 
               <select
-                aria-label="Your indexed policy"
+                aria-label="Your Bradbury policy"
                 value={
                   selectedIndexedPolicy
                     ?.policyId ?? ""

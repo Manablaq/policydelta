@@ -1,6 +1,5 @@
 "use client";
 
-import { useAccount } from "@/providers/account-provider";
 import type { PolicyWriteFunction } from "@/lib/account/validation";
 
 import {
@@ -350,10 +349,6 @@ export function TransactionProvider({
 }) {
   const queryClient =
     useQueryClient();
-
-  const { indexActivity } =
-    useAccount();
-
   const [transactions, setTransactions] =
     useState<TrackedTransaction[]>([]);
 
@@ -540,13 +535,14 @@ export function TransactionProvider({
             current.executionStatus !==
               state.executionStatus;
 
-          if (
-            indexableChange &&
-            current.functionName
-          ) {
-            await indexActivity({
-              hash: current.hash,
-            }).catch(() => undefined);
+          if (indexableChange) {
+            await queryClient.invalidateQueries(
+              {
+                queryKey: [
+                  "policydelta-account",
+                ],
+              },
+            );
           }
 
           if (shouldRefreshState) {
@@ -611,8 +607,7 @@ export function TransactionProvider({
       },
       [
         commit,
-        indexActivity,
-        queryClient,
+queryClient,
       ],
     );
 

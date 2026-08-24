@@ -13,17 +13,10 @@ import {
   ArrowRight,
   FileText,
   LoaderCircle,
-  Search,
+  RefreshCw,
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  FormEvent,
-  useState,
-} from "react";
-import {
-  toast,
-} from "sonner";
 
 export function WalletPolicies() {
   const {
@@ -31,98 +24,17 @@ export function WalletPolicies() {
   } = useWallet();
 
   const {
-    configured,
+    error,
     refresh,
+    isRefreshing,
   } = useAccount();
 
   const {
     policies,
-    indexedCount,
+    policyCount,
     loading,
-  } = useWalletPolicySummaries();
-
-  const [
-    importId,
-    setImportId,
-  ] = useState("");
-
-  const [
-    importing,
-    setImporting,
-  ] = useState(false);
-
-  async function importExisting(
-    event:
-      FormEvent<HTMLFormElement>,
-  ) {
-    event.preventDefault();
-
-    const policyId =
-      importId.trim();
-
-    if (!policyId) {
-      return;
-    }
-
-    setImporting(true);
-
-    try {
-      const response =
-        await fetch(
-          "/api/account/policy",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              wallet: address,
-              policyId,
-            }),
-          },
-        );
-
-      const payload: unknown =
-        await response.json();
-
-      const data =
-        payload &&
-        typeof payload ===
-          "object" &&
-        !Array.isArray(payload)
-          ? payload as Record<
-              string,
-              unknown
-            >
-          : {};
-
-      if (!response.ok) {
-        throw new Error(
-          typeof data.error ===
-            "string"
-            ? data.error
-            : "Policy import failed.",
-        );
-      }
-
-      await refresh();
-
-      setImportId("");
-
-      toast.success(
-        `Imported ${policyId}.`,
-      );
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Policy import failed.",
-      );
-    } finally {
-      setImporting(false);
-    }
-  }
+  } =
+    useWalletPolicySummaries();
 
   if (!address) {
     return (
@@ -139,7 +51,7 @@ export function WalletPolicies() {
             </h2>
 
             <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
-              Connect a wallet to load its PolicyDelta workspace.
+              Connect a wallet to reconstruct its PolicyDelta policies directly from Bradbury.
             </p>
           </div>
         </div>
@@ -159,72 +71,43 @@ export function WalletPolicies() {
             Your policies
           </h2>
 
-          <p className="mt-2 max-w-[680px] text-sm leading-6 text-[var(--muted)]">
-            Policies indexed for this wallet are refreshed from the deployed Bradbury contract before presentation.
+          <p className="mt-2 max-w-[720px] text-sm leading-6 text-[var(--muted)]">
+            PolicyDelta reconstructs this wallet&apos;s real transaction history from Bradbury, discovers its policies automatically, then reads their current authority directly from the deployed contract.
           </p>
         </div>
 
-        <span className="badge bg-[var(--accent-soft)] text-[var(--accent-text)]">
-          {indexedCount} indexed
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="badge bg-[var(--accent-soft)] text-[var(--accent-text)]">
+            {policyCount} discovered
+          </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              void refresh()
+            }
+            disabled={
+              isRefreshing
+            }
+            className="button-secondary"
+          >
+            <RefreshCw
+              size={14}
+              className={
+                isRefreshing
+                  ? "animate-spin"
+                  : undefined
+              }
+            />
+            Refresh chain
+          </button>
+        </div>
       </div>
 
-      {!configured && (
-        <div className="mt-5 rounded-2xl bg-[var(--warning-soft)] p-4 text-sm leading-6 text-[var(--warning)]">
-          Persistent account indexing is not configured in this deployment. Exact Bradbury policy lookup remains available below.
+      {error && (
+        <div className="mt-6 rounded-2xl bg-[var(--warning-soft)] p-4 text-sm leading-6 text-[var(--warning)]">
+          Bradbury discovery could not refresh: {error}
         </div>
-      )}
-
-      {configured && (
-        <form
-          onSubmit={
-            importExisting
-          }
-          className="mt-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4"
-        >
-          <p className="text-sm font-semibold">
-            Import an older policy
-          </p>
-
-          <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
-            Use this only for policies created before persistent wallet indexing was enabled. The server verifies that this wallet is actually the Bradbury principal or publisher.
-          </p>
-
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <div className="flex h-11 flex-1 items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--background)] px-3">
-              <Search
-                size={15}
-                className="text-[var(--muted)]"
-              />
-
-              <input
-                value={importId}
-                onChange={(
-                  event,
-                ) =>
-                  setImportId(
-                    event.target.value,
-                  )
-                }
-                placeholder="Existing PolicyDelta policy ID"
-                className="w-full bg-transparent text-sm outline-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={
-                importing ||
-                !importId.trim()
-              }
-              className="button-secondary disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              {importing
-                ? "Verifying…"
-                : "Import"}
-            </button>
-          </div>
-        </form>
       )}
 
       {loading && (
@@ -233,12 +116,13 @@ export function WalletPolicies() {
             size={17}
             className="animate-spin"
           />
-          Loading live policy state…
+          Reconstructing wallet history and loading live policy state…
         </div>
       )}
 
       {!loading &&
-        policies.length === 0 && (
+        policies.length ===
+          0 && (
           <div className="mt-6 rounded-2xl border border-dashed border-[var(--line-strong)] px-6 py-12 text-center">
             <FileText
               size={21}
@@ -246,17 +130,18 @@ export function WalletPolicies() {
             />
 
             <h3 className="mt-4 font-semibold">
-              No policies indexed yet
+              No PolicyDelta policies found
             </h3>
 
-            <p className="mx-auto mt-2 max-w-[520px] text-sm leading-6 text-[var(--muted)]">
-              Create a new policy below, or import a policy this wallet already owns.
+            <p className="mx-auto mt-2 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
+              Bradbury does not currently show a PolicyDelta policy owned or published by this wallet.
             </p>
           </div>
         )}
 
       {!loading &&
-        policies.length > 0 && (
+        policies.length >
+          0 && (
           <div className="mt-6 grid gap-3">
             {policies.map(
               (policy) => (
@@ -278,7 +163,9 @@ export function WalletPolicies() {
                       </p>
 
                       <p className="mt-1 text-xs capitalize text-[var(--muted)]">
-                        {policy.role}
+                        {
+                          policy.role
+                        }
                       </p>
                     </div>
 

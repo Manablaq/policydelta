@@ -33,14 +33,14 @@ export type WalletPolicySummary = {
 
 export function useWalletPolicySummaries() {
   const {
-    policies: indexedPolicies,
+    policies: walletPolicies,
     isLoading: accountLoading,
   } = useAccount();
 
   const policyQueries =
     useQueries({
       queries:
-        indexedPolicies.map(
+        walletPolicies.map(
           (entry) => ({
             queryKey: [
               "policydelta",
@@ -60,7 +60,7 @@ export function useWalletPolicySummaries() {
   const activeQueries =
     useQueries({
       queries:
-        indexedPolicies.map(
+        walletPolicies.map(
           (entry, index) => {
             const policy =
               policyQueries[
@@ -96,7 +96,7 @@ export function useWalletPolicySummaries() {
   const openQueries =
     useQueries({
       queries:
-        indexedPolicies.map(
+        walletPolicies.map(
           (entry, index) => {
             const policy =
               policyQueries[
@@ -135,7 +135,7 @@ export function useWalletPolicySummaries() {
       WalletPolicySummary[]
     >(
       () =>
-        indexedPolicies.map(
+        walletPolicies.map(
           (entry, index) => {
             const policyQuery =
               policyQueries[index];
@@ -210,7 +210,7 @@ export function useWalletPolicySummaries() {
           },
         ),
       [
-        indexedPolicies,
+        walletPolicies,
         policyQueries,
         activeQueries,
         openQueries,
@@ -219,8 +219,8 @@ export function useWalletPolicySummaries() {
 
   return {
     policies: summaries,
-    indexedCount:
-      indexedPolicies.length,
+    policyCount:
+      walletPolicies.length,
     loading:
       accountLoading ||
       summaries.some(

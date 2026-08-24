@@ -11,7 +11,7 @@ export default function AppOverviewPage() {
       <AppPageHeader
         eyebrow="Policy workspace"
         title="Authority at a glance"
-        description="See the connected wallet's indexed policies, live Bradbury authority, pending consent requirements, and verified transaction history."
+        description="See the connected wallet's policies discovered automatically from Bradbury, live authority, pending consent requirements, and verified on-chain transaction history."
       />
 
       <AccountOverview />

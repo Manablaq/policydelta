@@ -33,13 +33,14 @@ export function AccountOverview() {
 
   const {
     activity,
-    configured,
+    error,
+    refresh,
     isLoading: accountLoading,
   } = useAccount();
 
   const {
     policies,
-    indexedCount,
+    policyCount,
     loading: policyLoading,
   } = useWalletPolicySummaries();
 
@@ -56,14 +57,14 @@ export function AccountOverview() {
         </h2>
 
         <p className="mx-auto mt-2 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
-          PolicyDelta will load the policies and verified activity associated with the connected Bradbury wallet.
+          PolicyDelta automatically reconstructs this wallet&apos;s PolicyDelta history from Bradbury and loads the current contract authority.
         </p>
       </section>
     );
   }
 
   if (
-    !configured &&
+    error &&
     !accountLoading
   ) {
     return (
@@ -74,12 +75,22 @@ export function AccountOverview() {
         />
 
         <h2 className="mt-4 text-xl font-semibold tracking-[-0.035em]">
-          Account index unavailable here
+          Bradbury discovery needs another try
         </h2>
 
-        <p className="mx-auto mt-2 max-w-[600px] text-sm leading-6 text-[var(--muted)]">
-          The wallet is connected, but this deployment does not currently expose the PolicyDelta account database. Live Bradbury policy lookup still works normally.
+        <p className="mx-auto mt-2 max-w-[620px] text-sm leading-6 text-[var(--muted)]">
+          {error}
         </p>
+
+        <button
+          type="button"
+          onClick={() =>
+            void refresh()
+          }
+          className="button-secondary mt-5"
+        >
+          Retry Bradbury
+        </button>
       </section>
     );
   }
@@ -115,10 +126,10 @@ export function AccountOverview() {
             accountLoading
               ? "…"
               : String(
-                  indexedCount,
+                  policyCount,
                 )
           }
-          detail="Verified wallet associations"
+          detail="Discovered directly from Bradbury"
           icon={
             <ShieldCheck
               size={18}
@@ -150,7 +161,7 @@ export function AccountOverview() {
                   openProposals,
                 )
           }
-          detail="Across your indexed policies"
+          detail="Across your live policies"
           icon={
             <FileText size={18} />
           }
@@ -165,7 +176,7 @@ export function AccountOverview() {
                   finalizedActivity,
                 )
           }
-          detail="Successful verified writes"
+          detail="Finalized successful writes"
           icon={
             <Activity size={18} />
           }
@@ -216,11 +227,11 @@ export function AccountOverview() {
                 />
 
                 <p className="mt-4 font-semibold">
-                  No indexed policies yet
+                  No PolicyDelta policies found
                 </p>
 
                 <p className="mx-auto mt-2 max-w-[520px] text-sm leading-6 text-[var(--muted)]">
-                  New PolicyDelta activity will be indexed automatically. If this wallet already owns an older policy, open Policies and import it once by its Bradbury policy ID.
+                  PolicyDelta reconstructs this wallet&apos;s history directly from Bradbury. No manual policy import or off-chain account index is required.
                 </p>
               </div>
             )}
@@ -327,14 +338,14 @@ export function AccountOverview() {
             />
 
             <Row
-              label="Indexed policies"
+              label="Discovered policies"
               value={String(
-                indexedCount,
+                policyCount,
               )}
             />
 
             <Row
-              label="Indexed activity"
+              label="On-chain activity"
               value={String(
                 activity.length,
               )}

@@ -17,7 +17,7 @@ export default function PoliciesPage() {
       <AppPageHeader
         eyebrow="Policies"
         title="Policy registry"
-        description="See the connected wallet's indexed policies, create new authority, import older owned policies, or inspect any exact PolicyDelta ID directly from Bradbury."
+        description="See the connected wallet's policies discovered automatically from Bradbury, create new authority, or inspect any exact PolicyDelta ID directly from the deployed contract."
       />
 
       <section className="mt-8 space-y-4">

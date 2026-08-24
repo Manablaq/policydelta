@@ -17,10 +17,6 @@ import {
   useMemo,
 } from "react";
 
-type IndexActivityInput = {
-  hash: string;
-};
-
 type AccountContextValue = {
   snapshot:
     WalletAccountSnapshot | null;
@@ -28,22 +24,16 @@ type AccountContextValue = {
     WalletAccountSnapshot["policies"];
   activity:
     WalletAccountSnapshot["activity"];
-  configured: boolean;
   isLoading: boolean;
-  indexPolicy:
-    (policyId: string) =>
-      Promise<void>;
-  indexActivity:
-    (
-      input: IndexActivityInput,
-    ) => Promise<void>;
+  isRefreshing: boolean;
+  error: string | null;
   refresh: () => Promise<void>;
 };
 
 const AccountContext =
-  createContext<AccountContextValue | null>(
-    null,
-  );
+  createContext<
+    AccountContextValue | null
+  >(null);
 
 async function readJson(
   response: Response,
@@ -54,7 +44,8 @@ async function readJson(
   if (!response.ok) {
     const data =
       payload &&
-      typeof payload === "object" &&
+      typeof payload ===
+        "object" &&
       !Array.isArray(payload)
         ? payload as Record<
             string,
@@ -63,9 +54,10 @@ async function readJson(
         : {};
 
     throw new Error(
-      typeof data.error === "string"
+      typeof data.error ===
+        "string"
         ? data.error
-        : "PolicyDelta account request failed.",
+        : "Bradbury wallet discovery failed.",
     );
   }
 
@@ -75,15 +67,20 @@ async function readJson(
 export function AccountProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children:
+    React.ReactNode;
 }) {
-  const { address } = useWallet();
+  const {
+    address,
+  } = useWallet();
 
   const queryClient =
     useQueryClient();
 
   const normalized =
-    address?.toLowerCase() ?? "";
+    address
+      ?.toLowerCase() ??
+    "";
 
   const query =
     useQuery({
@@ -91,140 +88,109 @@ export function AccountProvider({
         "policydelta-account",
         normalized,
       ],
-      enabled: Boolean(normalized),
-      queryFn: async () => {
-        const response =
-          await fetch(
-            `/api/account?wallet=${encodeURIComponent(
-              normalized,
-            )}`,
-            {
-              cache: "no-store",
-            },
-          );
+      enabled:
+        Boolean(
+          normalized,
+        ),
+      queryFn:
+        async () => {
+          const response =
+            await fetch(
+              `/api/account?wallet=${encodeURIComponent(
+                normalized,
+              )}`,
+              {
+                cache:
+                  "no-store",
+              },
+            );
 
-        return (
-          await readJson(
-            response,
-          )
-        ) as WalletAccountSnapshot;
-      },
+          return (
+            await readJson(
+              response,
+            )
+          ) as WalletAccountSnapshot;
+        },
+      staleTime:
+        10_000,
+      refetchInterval:
+        30_000,
+      refetchOnWindowFocus:
+        true,
+      refetchOnReconnect:
+        true,
       retry: 1,
-      refetchOnWindowFocus: true,
     });
 
   const refresh =
-    useCallback(async () => {
-      if (!normalized) return;
-
-      await queryClient.invalidateQueries(
-        {
-          queryKey: [
-            "policydelta-account",
-            normalized,
-          ],
-        },
-      );
-    }, [
-      normalized,
-      queryClient,
-    ]);
-
-  const indexPolicy =
     useCallback(
-      async (
-        policyId: string,
-      ) => {
-        if (!normalized) return;
-
-        const response =
-          await fetch(
-            "/api/account/policy",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-              body: JSON.stringify({
-                wallet: normalized,
-                policyId,
-              }),
-            },
-          );
-
-        if (!response.ok) {
+      async () => {
+        if (!normalized) {
           return;
         }
 
-        await refresh();
+        await queryClient
+          .invalidateQueries({
+            queryKey: [
+              "policydelta-account",
+              normalized,
+            ],
+          });
+
+        await queryClient
+          .refetchQueries({
+            queryKey: [
+              "policydelta-account",
+              normalized,
+            ],
+            type:
+              "active",
+          });
       },
       [
         normalized,
-        refresh,
-      ],
-    );
-
-  const indexActivity =
-    useCallback(
-      async (
-        input: IndexActivityInput,
-      ) => {
-        if (!normalized) return;
-
-        const response =
-          await fetch(
-            "/api/account/activity",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-              body: JSON.stringify({
-                wallet: normalized,
-                hash: input.hash,
-              }),
-            },
-          );
-
-        if (!response.ok) {
-          return;
-        }
-
-        await refresh();
-      },
-      [
-        normalized,
-        refresh,
+        queryClient,
       ],
     );
 
   const value =
-    useMemo<AccountContextValue>(
+    useMemo<
+      AccountContextValue
+    >(
       () => ({
         snapshot:
-          query.data ?? null,
+          query.data ??
+          null,
         policies:
-          query.data?.policies ?? [],
+          query.data
+            ?.policies ??
+          [],
         activity:
-          query.data?.activity ?? [],
-        configured:
-          query.data?.configured ??
-          false,
+          query.data
+            ?.activity ??
+          [],
         isLoading:
-          Boolean(normalized) &&
+          Boolean(
+            normalized,
+          ) &&
           query.isPending,
-        indexPolicy,
-        indexActivity,
+        isRefreshing:
+          query.isFetching &&
+          !query.isPending,
+        error:
+          query.error instanceof
+          Error
+            ? query.error
+                .message
+            : null,
         refresh,
       }),
       [
         normalized,
         query.data,
+        query.error,
+        query.isFetching,
         query.isPending,
-        indexPolicy,
-        indexActivity,
         refresh,
       ],
     );
@@ -240,7 +206,9 @@ export function AccountProvider({
 
 export function useAccount() {
   const context =
-    useContext(AccountContext);
+    useContext(
+      AccountContext,
+    );
 
   if (!context) {
     throw new Error(

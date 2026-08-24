@@ -3,7 +3,7 @@ export type WalletPolicyRole =
   | "publisher"
   | "both";
 
-export type IndexedWalletPolicy = {
+export type WalletPolicyRecord = {
   wallet: string;
   policyId: string;
   role: WalletPolicyRole;
@@ -11,7 +11,7 @@ export type IndexedWalletPolicy = {
   updatedAt: string;
 };
 
-export type IndexedWalletActivity = {
+export type WalletActivityRecord = {
   hash: string;
   wallet: string;
   functionName: string;
@@ -25,8 +25,10 @@ export type IndexedWalletActivity = {
 };
 
 export type WalletAccountSnapshot = {
-  configured: boolean;
-  wallet: string | null;
-  policies: IndexedWalletPolicy[];
-  activity: IndexedWalletActivity[];
+  source: "bradbury";
+  wallet: string;
+  scannedFromBlock: number;
+  scannedToBlock: number;
+  policies: WalletPolicyRecord[];
+  activity: WalletActivityRecord[];
 };

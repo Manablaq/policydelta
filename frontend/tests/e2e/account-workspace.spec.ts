@@ -242,7 +242,7 @@ async function walletRequests(
   );
 }
 
-test("connected wallet overview hydrates persistent account data and live Bradbury policy state", async ({
+test("connected wallet overview hydrates Bradbury account data and live Bradbury policy state", async ({
   page,
 }) => {
   await installConnectedWallet(
@@ -310,7 +310,7 @@ test("connected wallet overview hydrates persistent account data and live Bradbu
   ).toEqual([]);
 });
 
-test("policies page exposes indexed wallet policy without requiring exact-ID discovery", async ({
+test("policies page exposes Bradbury-discovered wallet policy without requiring exact-ID discovery", async ({
   page,
 }) => {
   await installConnectedWallet(
@@ -334,7 +334,7 @@ test("policies page exposes indexed wallet policy without requiring exact-ID dis
 
   await expect(
     page.getByText(
-      "1 indexed",
+      "1 discovered",
       {
         exact: true,
       },
@@ -448,7 +448,7 @@ test("compare page offers connected wallet policies and real Bradbury version ch
 
   const policySelect =
     page.getByLabel(
-      "Your indexed policy",
+      "Your Bradbury policy",
     );
 
   await expect(

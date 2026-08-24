@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   Clock3,
   LoaderCircle,
+  RefreshCw,
+  XCircle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -25,8 +27,10 @@ export function WalletActivity() {
 
   const {
     activity,
-    configured,
     isLoading,
+    isRefreshing,
+    error,
+    refresh,
   } = useAccount();
 
   if (!address) {
@@ -41,8 +45,8 @@ export function WalletActivity() {
           Connect a wallet
         </h2>
 
-        <p className="mx-auto mt-2 max-w-[540px] text-sm leading-6 text-[var(--muted)]">
-          Persistent PolicyDelta transaction history is organized by the connected Bradbury wallet.
+        <p className="mx-auto mt-2 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
+          PolicyDelta will reconstruct that wallet&apos;s contract activity directly from Bradbury.
         </p>
       </div>
     );
@@ -55,12 +59,15 @@ export function WalletActivity() {
           size={18}
           className="animate-spin"
         />
-        Loading wallet activity…
+        Reconstructing Bradbury wallet activity…
       </div>
     );
   }
 
-  if (!configured) {
+  if (
+    error &&
+    activity.length === 0
+  ) {
     return (
       <div className="mt-8 panel px-6 py-16 text-center">
         <Clock3
@@ -69,17 +76,30 @@ export function WalletActivity() {
         />
 
         <h2 className="mt-4 font-semibold">
-          Persistent activity unavailable
+          Bradbury history unavailable
         </h2>
 
-        <p className="mx-auto mt-2 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
-          This deployment has no account database configured. Browser-local transaction tracking remains available from the activity button in the top bar.
+        <p className="mx-auto mt-2 max-w-[600px] text-sm leading-6 text-[var(--muted)]">
+          {error}
         </p>
+
+        <button
+          type="button"
+          onClick={() =>
+            void refresh()
+          }
+          className="button-secondary mt-5"
+        >
+          <RefreshCw size={14} />
+          Retry
+        </button>
       </div>
     );
   }
 
-  if (activity.length === 0) {
+  if (
+    activity.length === 0
+  ) {
     return (
       <div className="mt-8 panel px-6 py-20 text-center">
         <Activity
@@ -88,11 +108,11 @@ export function WalletActivity() {
         />
 
         <h2 className="mt-4 font-semibold">
-          No indexed activity yet
+          No PolicyDelta activity found
         </h2>
 
-        <p className="mx-auto mt-2 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
-          Future PolicyDelta writes from this wallet will appear here across browsers and deployments after Bradbury verification.
+        <p className="mx-auto mt-2 max-w-[580px] text-sm leading-6 text-[var(--muted)]">
+          No PolicyDelta contract calls from this wallet were discovered on Bradbury.
         </p>
       </div>
     );
@@ -100,14 +120,41 @@ export function WalletActivity() {
 
   return (
     <div className="mt-8 panel overflow-hidden">
-      <div className="border-b border-[var(--line)] p-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[var(--muted)]">
-          Persistent wallet history
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--line)] p-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[var(--muted)]">
+            Bradbury wallet history
+          </p>
 
-        <h2 className="mt-2 text-xl font-semibold tracking-[-0.035em]">
-          Verified PolicyDelta activity
-        </h2>
+          <h2 className="mt-2 text-xl font-semibold tracking-[-0.035em]">
+            Verified PolicyDelta activity
+          </h2>
+
+          <p className="mt-2 max-w-[620px] text-sm leading-6 text-[var(--muted)]">
+            Reconstructed from PolicyDelta&apos;s real NewTransaction events and GenLayer transaction records.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() =>
+            void refresh()
+          }
+          disabled={
+            isRefreshing
+          }
+          className="button-secondary"
+        >
+          <RefreshCw
+            size={14}
+            className={
+              isRefreshing
+                ? "animate-spin"
+                : undefined
+            }
+          />
+          Refresh
+        </button>
       </div>
 
       <div className="divide-y divide-[var(--line)]">
@@ -119,9 +166,15 @@ export function WalletActivity() {
               item.executionStatus ===
                 "FINISHED_WITH_RETURN";
 
+            const failed =
+              item.executionStatus ===
+              "FINISHED_WITH_ERROR";
+
             return (
               <article
-                key={item.hash}
+                key={
+                  item.hash
+                }
                 className="p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -132,6 +185,11 @@ export function WalletActivity() {
                           size={16}
                           className="text-[var(--success)]"
                         />
+                      ) : failed ? (
+                        <XCircle
+                          size={16}
+                          className="text-[var(--danger)]"
+                        />
                       ) : (
                         <Clock3
                           size={16}
@@ -140,11 +198,9 @@ export function WalletActivity() {
                       )}
 
                       <p className="font-semibold">
-                        {item.methodVerified
-                          ? humanizeAction(
-                              item.functionName,
-                            )
-                          : "PolicyDelta contract write"}
+                        {humanizeAction(
+                          item.functionName,
+                        )}
                       </p>
                     </div>
 
@@ -184,7 +240,13 @@ export function WalletActivity() {
                       }
                     </span>
 
-                    <span className="badge bg-[var(--surface-strong)] text-[var(--muted-strong)]">
+                    <span
+                      className={`badge ${
+                        failed
+                          ? "bg-[var(--danger-soft)] text-[var(--danger)]"
+                          : "bg-[var(--surface-strong)] text-[var(--muted-strong)]"
+                      }`}
+                    >
                       {
                         item.executionStatus
                       }
@@ -195,7 +257,7 @@ export function WalletActivity() {
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--muted)]">
                   <span>
                     {new Date(
-                      item.updatedAt,
+                      item.submittedAt,
                     ).toLocaleString()}
                   </span>
 
@@ -224,7 +286,10 @@ function humanizeAction(
   value: string,
 ) {
   return value
-    .replaceAll("_", " ")
+    .replaceAll(
+      "_",
+      " ",
+    )
     .replace(
       /\b\w/g,
       (letter) =>
