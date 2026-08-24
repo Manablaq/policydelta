@@ -1,105 +1,235 @@
-# PolicyDelta frontend
+# PolicyDelta Frontend
 
-Production frontend for PolicyDelta, built with Next.js App Router, TypeScript,
-Tailwind CSS, GenLayerJS, TanStack Query, Motion, and next-themes.
+Production frontend for PolicyDelta.
 
-## Product boundary
+[https://policydelta.vercel.app](https://policydelta.vercel.app)
 
-The frontend consumes the already-frozen PolicyDelta Intelligent Contract.
-Frontend implementation must not change contract semantics to simplify UI work.
+## Deployment
 
-Bradbury contract:
-
-`0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E`
-
+```text
 Network:
+GenLayer Bradbury Testnet
 
-- GenLayer Bradbury Testnet
-- Chain ID: `4221`
+Chain ID:
+4221
 
-## Non-negotiable UX requirements
+Contract:
+0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E
+```
 
-- public landing page before the application workspace;
-- clear product explanation and how-it-works flow;
-- old/new policy versions side-by-side;
-- materiality verdict and re-consent state;
-- never label `ACCEPTED` as `FINALIZED`;
-- never treat execution failure as successful contract execution;
-- never show awaiting/rejected/expired/superseded versions as authorized;
-- expose version lineage and immutable history;
-- automatic query refresh after transaction state changes;
-- no manual browser reload required after writes;
-- persistent light/dark theme;
-- responsive mobile and desktop layouts;
-- reduced-motion accessibility support;
-- explicit error and recovery states.
+The frontend consumes the frozen PolicyDelta Intelligent Contract.
 
-## Visual direction
+Frontend implementation does not redefine contract authorization semantics.
 
-PolicyDelta uses Instrument Sans Variable for its primary UI and JetBrains Mono
-Variable for addresses, hashes, IDs, and transaction metadata.
+## Stack
 
-The landing page is editorial and narrative. The application workspace is a
-structured trust/operations console rather than a generic crypto dashboard.
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- GenLayerJS
+- TanStack Query
+- Playwright
+- Motion
+- next-themes
 
-## Production metadata
+## Product surfaces
 
-Set `NEXT_PUBLIC_SITE_URL` to the canonical deployed origin when a
-custom production domain is known. On Vercel, PolicyDelta falls back to
-the platform-provided `VERCEL_URL`; local builds fall back to
-`http://localhost:3000`.
+The production application contains:
 
-## Runtime configuration
+- public landing page;
+- connected-wallet Overview;
+- automatic wallet policy discovery;
+- exact policy lookup;
+- policy detail and lineage;
+- semantic version comparison;
+- PolicyDelta Activity history;
+- deployment Evidence;
+- finality-aware transaction center.
 
-PolicyDelta is intentionally pinned to the GenLayer Bradbury Testnet
-(`testnetBradbury`, chain ID `4221`) in application configuration.
+## Account architecture
 
-Public deployment configuration:
+PolicyDelta derives historical account state directly from Bradbury.
+
+The account route reconstructs wallet history from Bradbury.
+
+```text
+Connected wallet
+      ↓
+ConsensusMain transaction logs
+      ↓
+EVM wallet origin
+      ↓
+Canonical GenLayer transaction
+      ↓
+Decoded PolicyDelta method
+      ↓
+Policy IDs + activity
+      ↓
+Current contract state
+```
+
+Account route:
+
+```text
+src/app/api/account/route.ts
+```
+
+Discovery implementation:
+
+```text
+src/lib/account/chain-discovery.ts
+```
+
+## Wallet boundary
+
+Connecting a wallet:
+
+```text
+requests account access
+verifies network
+loads account context
+```
+
+Connecting does not automatically:
+
+```text
+sign
+submit
+execute a PolicyDelta write
+```
+
+When multiple injected wallet providers exist, PolicyDelta preserves explicit provider selection.
+
+Immediately before a write, the frontend re-checks:
+
+- selected provider;
+- account;
+- Bradbury chain.
+
+## Write boundary
+
+All application-level PolicyDelta writes are centralized through:
+
+```text
+src/hooks/use-policy-write.ts
+```
+
+Individual pages do not create independent signing pipelines.
+
+## Finality handling
+
+The frontend keeps these states separate:
+
+```text
+ACCEPTED
+FINALIZED
+FINISHED_WITH_RETURN
+FINISHED_WITH_ERROR
+```
+
+Successful finalized execution requires:
+
+```text
+FINALIZED
++
+FINISHED_WITH_RETURN
+```
+
+A finalized transaction with `FINISHED_WITH_ERROR` remains a failure.
+
+## Browser persistence
+
+Recent submitted transaction references may be persisted locally for transaction UX.
+
+That persistence is not used for historical wallet discovery or authoritative policy state.
+
+Bradbury remains authoritative.
+
+## Automatic refresh
+
+Transaction-state changes invalidate relevant TanStack Query entries.
+
+The frontend then reads live Bradbury state again.
+
+No normal workflow requires a manual page reload after a successful state transition.
+
+## Public configuration
 
 ```env
 NEXT_PUBLIC_POLICY_DELTA_ADDRESS=0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E
 NEXT_PUBLIC_GENLAYER_EXPLORER_URL=https://explorer-bradbury.genlayer.com
-NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_SITE_URL=https://policydelta.vercel.app
 ```
 
-`NEXT_PUBLIC_SITE_URL` is optional. On Vercel, metadata falls back to
-`VERCEL_URL`; local builds fall back to `http://localhost:3000`.
+The application is pinned to Bradbury chain ID `4221`.
 
-## Local verification
+## Local development
 
 ```bash
 npm ci
+npm run dev
+```
+
+## Verification
+
+```bash
 npm run lint -- --max-warnings=0
 npm run build
 npm run test:e2e
 ```
 
-The browser suite covers the public landing experience, responsive
-application shell, live Bradbury policy reads, immutable lineage,
-side-by-side comparison, transaction persistence/finality semantics,
-wallet permissions, and the transaction activity overlay.
+Verified browser regression:
 
-## Bradbury live frontend QA
+```text
+26/26 PASS
+```
 
-A disposable Bradbury policy was used to verify the real frontend write
-path without changing the validated reference policy.
+## Real Bradbury account test
 
-The exercised lifecycle was:
+```bash
+npx playwright test \
+  tests/e2e/chain-account.spec.ts
+```
 
-1. create V1;
-2. propose byte-identical V2;
-3. review V2 through the deterministic non-material path.
+This test uses live Bradbury history.
 
-All three submitted frontend transactions were observed as `FINALIZED`
-with `FINISHED_WITH_RETURN`.
+## Frontend QA policy
 
-The resulting on-chain policy state was:
+```text
+policydelta-ui-qa-20260824-0412
+```
 
-- V2 `ACTIVE` and authorized;
-- V1 `REPLACED`;
-- no open replacement;
-- change class `NON_MATERIAL`;
-- re-consent not required.
+Validated lifecycle:
 
-`ACCEPTED` is never treated as finality, and an accepted transaction
-with `FINISHED_WITH_ERROR` is not treated as successful execution.
+```text
+V1 create
+→ V2 proposal
+→ V2 NON_MATERIAL review
+→ V2 ACTIVE
+```
+
+The three intended frontend transactions reached:
+
+```text
+FINALIZED
+FINISHED_WITH_RETURN
+```
+
+## Production screenshots
+
+Repository documentation screenshots are stored at:
+
+```text
+../docs/assets/screenshots/
+```
+
+They were captured from the real production application using a read-only documentation provider that blocked signing and transaction submission.
+
+## Related documentation
+
+- [`../README.md`](../README.md)
+- [`../docs/README.md`](../docs/README.md)
+- [`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md)
+- [`../docs/TESTING_AND_REPRODUCTION.md`](../docs/TESTING_AND_REPRODUCTION.md)
+- [`../docs/REVIEWER_GUIDE.md`](../docs/REVIEWER_GUIDE.md)

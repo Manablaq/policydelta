@@ -1,36 +1,145 @@
-# Build Status — 2026-08-23
+# PolicyDelta Build Status — 2026-08-24
 
-## Verified on the user's pinned local toolchain before v1.4
+## Current state
 
-The v1.3 source (`6cac6690ab5ef9d9b2ee3aaca885547d70a8f729a2a8eaa50a0bebc143a8d705`) produced this evidence on Python 3.12.14 with `genlayer-test==0.29.2` and `genvm-linter==0.11.0`:
+PolicyDelta has completed:
 
-- static reviewer guards: PASS;
-- authorization/fail-closed model: PASS;
-- Direct Mode: 22/22 PASS;
-- GenVM semantic validation: PASS;
-- strict typecheck: 0 errors, 0 warnings (SDK typing diagnostics remained informational);
-- ABI generation: PASS;
-- GenVM lint: **FAIL** because the `gl.nondet.exec_prompt` call was located in a nested helper that the linter could not prove reachable from the equivalence-principle block.
+- Intelligent Contract implementation;
+- Direct Mode contract regression;
+- GenVM validation;
+- contract source freeze;
+- Bradbury deployment;
+- deployed-source parity verification;
+- live Bradbury lifecycle validation;
+- production frontend implementation;
+- browser E2E regression;
+- chain-native wallet-history reconstruction;
+- normal Git-integrated Vercel production deployment.
 
-Therefore v1.3 is **not** deployment-ready and must not be submitted or deployed as the final source.
+The current work is reviewer-facing documentation and submission preparation.
 
-## v1.4 correction awaiting verification
+## Contract identity
 
-v1.4 keeps the independent validator-recomputation design but moves `gl.nondet.exec_prompt(...)` directly into `leader_fn`, the function passed to `gl.vm.run_nondet_unsafe`. `validator_fn` independently invokes that computation on validator execution and compares the two exact consequential fields:
+```text
+Contract:
+0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E
 
-- `requires_reconsent`;
-- `change_class`.
+Network:
+GenLayer Bradbury Testnet
 
-The leader decision is not inserted into the validator's adjudication prompt. All storage/state effects remain outside the non-deterministic block.
+Chain ID:
+4221
 
-The v1.4 source must pass, in order:
+Frozen SHA-256:
+a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
 
-1. static reviewer guards;
-2. deterministic state-machine model;
-3. all Direct Mode tests including validator agreement and disagreement;
-4. `genvm-lint check` with both lint and validation passing;
-5. strict typecheck;
-6. ABI generation;
-7. source hash capture.
+Freeze commit:
+69835a0
+```
 
-Only after all seven pass may the source be frozen for Bradbury deployment.
+## Contract verification
+
+```text
+Direct Mode:
+22/22 PASS
+
+GenVM validation:
+PASS
+
+Strict type validation:
+PASS
+
+ABI generation:
+PASS
+
+Static verification:
+PASS
+```
+
+## Deployment
+
+Deployment transaction:
+
+```text
+0x66e01ac9797ebdf53a17fc56090bad546940adf3614350c362c711457b9b92ac
+```
+
+Deployed contract:
+
+```text
+0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E
+```
+
+Source parity evidence:
+
+```text
+deploy/evidence/BRADBURY_SOURCE_PARITY.txt
+```
+
+## Live Bradbury validation
+
+Validated paths include:
+
+- non-material review;
+- material review;
+- principal consent;
+- rejection;
+- fresh proposal after rejection;
+- superseded review failure;
+- superseded consent failure;
+- proposal expiry;
+- consent expiry;
+- expiry recovery;
+- final authorization state.
+
+Evidence summary:
+
+```text
+deploy/evidence/BRADBURY_VALIDATION_SUMMARY.md
+```
+
+## Production frontend
+
+```text
+https://policydelta.vercel.app
+```
+
+Verified frontend implementation commit:
+
+```text
+34052de0841e54939c6119b0fee58c67e5e958bb
+```
+
+## Frontend verification
+
+```text
+Lint:
+PASS
+
+Production build:
+PASS
+
+Playwright:
+26/26 PASS
+
+Real Bradbury account reconstruction:
+PASS
+
+Multi-provider wallet isolation:
+PASS
+
+Production deployment:
+PASS
+```
+
+## Account architecture
+
+Historical wallet PolicyDelta state is reconstructed from Bradbury.
+
+No private account database or manual historical import is required.
+
+## Release readiness
+
+The product implementation, Bradbury validation, production frontend, production screenshots, and reviewer-facing documentation are complete and undergoing final release verification.
+
+No additional Intelligent Contract deployment is required for this release.

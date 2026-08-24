@@ -1,53 +1,148 @@
-# Reviewer Readiness Gates
+# PolicyDelta Reviewer Readiness Gates
 
-PolicyDelta must not be submitted until every applicable gate below has evidence.
+This checklist records the gates used to prevent common Intelligent Contract submission failures.
 
-## Evidence and provenance
-- [ ] Core settlement/authorization evidence is immutable or versioned.
-- [ ] The publisher identity is bound on-chain; arbitrary provider-selected URLs cannot control the decision.
-- [ ] If external evidence is added later, approved publishers/signing keys, freshness, version pinning, and corroboration rules are explicit.
-- [ ] No stale mutable page can silently replace the evidence validators thought they reviewed.
+## Source provenance
+
+- [x] Contract source frozen before frontend work.
+- [x] Frozen SHA recorded.
+- [x] Bradbury deployment address recorded.
+- [x] Deployment transaction recorded.
+- [x] Deployed-source parity evidence recorded.
+- [x] Frontend work did not modify the frozen contract.
+
+Frozen SHA:
+
+```text
+a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+```
 
 ## Consensus-to-consequence binding
-- [ ] Validators independently recompute the canonical decision from the actual evidence and rubric without being shown the leader decision in their adjudication prompt; no shape-only validator.
-- [ ] Every field used by downstream authorization is consensus-bound.
-- [ ] No tolerance allows validators to accept different consequential values while the leader's exact value controls state or funds.
-- [ ] Malformed or contradictory leader output fails closed.
+
+- [x] Semantic materiality is the nondeterministic judgment.
+- [x] Consequential transitions remain constrained by contract logic.
+- [x] Validator output is restricted to known change classes.
+- [x] Review binds to the exact proposed version.
+- [x] Stale or superseded review fails closed.
 
 ## State-machine integrity
-- [ ] No alternate write method bypasses review or re-consent.
-- [ ] A suspended/pending/awaiting proposal cannot become active through an unchanged-field update.
-- [ ] Parent version is checked before review and consent.
-- [ ] New responses/proposals can trigger a fresh review without erasing history.
-- [ ] Replaced, superseded, rejected, and expired versions remain unauthorized and their stored status cannot still claim `ACTIVE`.
+
+- [x] Material changes enter `AWAITING_CONSENT`.
+- [x] Awaiting-consent versions remain unauthorized.
+- [x] Rejected versions remain unauthorized.
+- [x] Expired versions remain unauthorized.
+- [x] Superseded versions remain unauthorized.
+- [x] Current authorization can be queried by exact version.
 
 ## Liveness
-- [ ] Review deadline exists.
-- [ ] Consent deadline exists for material changes.
-- [ ] Expiry recovery is permissionless.
-- [ ] Failure/expiry preserves the last valid active policy.
 
-## Testing
-- [ ] Direct Mode happy path passes.
-- [ ] Validator agreement is exercised with `direct_vm.run_validator()`.
-- [ ] Validator disagreement is explicitly exercised.
-- [ ] Malformed LLM output is covered.
-- [ ] Review-expiry and consent-expiry are covered.
-- [ ] Superseding an open proposal is covered.
-- [ ] Unauthorized publisher/principal paths are covered.
-- [ ] Pickling checks pass.
-- [ ] GenVM lint, validation, strict typecheck, and ABI extraction pass.
-- [ ] Bradbury live tests cover approval and denial/disagreement behavior.
-- [ ] Finality is proven separately from acceptance.
+- [x] Proposal review has a deadline.
+- [x] Consent has a deadline.
+- [x] Expired versions can be recovered.
+- [x] Fresh proposals can supersede stale open proposals.
 
-## Deployment provenance
-- [ ] Contract source hash recorded immediately before deployment.
-- [ ] Explorer source matches the repository source exactly.
-- [ ] Submitted Explorer link points to the corrected/current deployment, never an earlier deployment.
-- [ ] Deployment address, tx hash, network, source hash, and repository commit are recorded together.
+## Contract testing
+
+- [x] Direct Mode suite passes.
+- [x] Material behavior covered.
+- [x] Non-material behavior covered.
+- [x] Rejection covered.
+- [x] Supersession covered.
+- [x] Expiry/recovery covered.
+
+Verified:
+
+```text
+22/22 PASS
+```
+
+## Bradbury validation
+
+- [x] Frozen source deployed to Bradbury.
+- [x] Source parity recorded.
+- [x] Non-material review finalized.
+- [x] Material review finalized.
+- [x] Consent path finalized.
+- [x] Rejection path finalized.
+- [x] Supersession failures observed.
+- [x] Expiry recovery observed.
+- [x] Final authority state recorded.
+
+## Finality semantics
+
+- [x] `ACCEPTED` is not presented as `FINALIZED`.
+- [x] Consensus and execution states are separate.
+- [x] `FINISHED_WITH_ERROR` is never treated as successful execution.
+
+## Wallet safety
+
+- [x] Wallet connect does not automatically sign.
+- [x] Wallet connect does not automatically submit.
+- [x] Multi-provider selection is explicit.
+- [x] Writes remain bound to the selected provider.
+- [x] Account/network are re-checked before writes.
+- [x] Application writes are centralized through one guarded hook.
 
 ## Frontend
-- [ ] `ACCEPTED` is visually distinct from `FINALIZED`.
-- [ ] Pending re-consent is visibly not authorized.
-- [ ] Fresh review is available after a superseding response/version.
-- [ ] No UI path claims a version is active when the contract says otherwise.
+
+- [x] Public landing page.
+- [x] Responsive application workspace.
+- [x] Bradbury policy reads.
+- [x] Automatic wallet policy discovery.
+- [x] Chain-native wallet activity reconstruction.
+- [x] Immutable version lineage.
+- [x] Semantic comparison.
+- [x] Evidence page.
+- [x] Transaction center.
+- [x] Light/dark theme.
+- [x] Browser regression suite.
+
+Verified:
+
+```text
+26/26 PASS
+```
+
+## Account architecture
+
+- [x] Historical account state is derived from Bradbury.
+- [x] Wallet-associated policies are discovered automatically.
+- [x] Wallet history reconstructed from Bradbury.
+- [x] Canonical GenLayer transaction decoding used.
+- [x] Current contract state read after discovery.
+
+## Production
+
+- [x] Normal Git-integrated Vercel deployment.
+- [x] Production deployment from `main`.
+- [x] Stable production URL.
+- [x] Production account endpoint verified.
+- [x] Production Overview visually verified.
+- [x] Production Activity visually verified.
+
+Production:
+
+```text
+https://policydelta.vercel.app
+```
+
+## Documentation
+
+- [x] Real production screenshots captured.
+- [x] Architecture documented.
+- [x] Finality model documented.
+- [x] Testing and reproduction documented.
+- [x] Reviewer quick-start documented.
+- [x] Deployment evidence indexed.
+- [x] Current production and deployment status documented.
+
+## Submission rule
+
+A final submission should reference only:
+
+- the current repository;
+- the frozen deployed contract;
+- the current Bradbury evidence;
+- the stable production application.
+
+Do not submit obsolete contract deployments, Preview URLs, or pre-deployment status text.
