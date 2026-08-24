@@ -1,0 +1,81 @@
+[genlayer-js] initializeConsensusSmartContract() is deprecated and will be removed in a future release. The consensus contract is now resolved from the static chain definition.
+- Calling write method propose_version on contract at 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E...
+
+Write Transaction Hash:
+0xa617f8f8458bad1c0eddde2d63021fafd3d9be53e4b8cfd07a9f7a33c989d241
+
+Result:
+{
+  currentTimestamp: '1787526496',
+  sender: '0x1f87Ae197af539253978d435aD45cCf28Fb95024',
+  recipient: '0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E',
+  initialRotations: 3n,
+  txSlot: '16',
+  createdTimestamp: '1787526483',
+  lastVoteTimestamp: '1787526495',
+  randomSeed: '0x1a5e37f2dd61d831aa0072f66b5ba98a53a0d0824cc6c07ca614e75f5cd36cc2',
+  result: 1,
+  txExecutionHash: '0x8f511c024bd30d50ece956b2783fce4078bc831df33cd2f0db5657d8bda625c5',
+  txCalldata: '0xf8dcb8d916046172677315ec01706f6c69637964656c74612d62726164627572792d6c6976652d303031d409466f7220656163682063616c656e646172206d6f6e74682c20746865206167656e7420697320617574686f72697a656420746f207370656e64206e6f206d6f7265207468616e20313230302047454e206f6e2041575320696e6672617374727563747572652e2053656e64696e672066756e647320746f20706572736f6e616c2077616c6c657473206973206e6f74207065726d69747465642e066d6574686f647c70726f706f73655f76657273696f6e00',
+  eqBlocksOutputs: '0xc786706164646564',
+  queueType: 0,
+  queuePosition: '0',
+  activator: '0x2CD9051E10cd1547a7b64eF61EbF1E608235dBda',
+  lastLeader: '0xC32bD21E1506Ab4954BA1EE8FBD50271Ca61b7DE',
+  status: 5,
+  txId: '0xa617f8f8458bad1c0eddde2d63021fafd3d9be53e4b8cfd07a9f7a33c989d241',
+  readStateBlockRange: {
+    activationBlock: '18865527',
+    processingBlock: '18865530',
+    proposalBlock: '18865534'
+  },
+  numOfRounds: '0',
+  lastRound: {
+    round: '0',
+    leaderIndex: '0',
+    votesCommitted: '5',
+    votesRevealed: '5',
+    appealBond: '0',
+    rotationsLeft: '3',
+    result: 1,
+    roundValidators: [
+      '0xC32bD21E1506Ab4954BA1EE8FBD50271Ca61b7DE',
+      '0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49',
+      '0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6',
+      '0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6',
+      '0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817'
+    ],
+    validatorVotes: [ 1, 1, 1, 1, 1 ],
+    validatorVotesHash: [
+      '0x72430deaf2c19b451d2e9e3f41def1533ac73d8e0921afe9dcc4f46936ad7758',
+      '0x180fa67650fdf0a8d4eddcc61d797cfa08ed20a3be355ef91321c1381aba86a7',
+      '0x5042c99bf137876381bdcd6bd65682fcb10aec657b6330d3857b409487c71e7b',
+      '0x742d4b7bfdec7a3b33228f018535463a582eddb5dc52f332d2c09c123440e02f',
+      '0xb2272b9fed297352eefd786e319bb32706d2c9116d693b1dc22bc7604750b1e4'
+    ],
+    validatorResultHash: [
+      '0xcc659e550ea95c2362cb40fa5689a83a72759ee6a5ffd01a4c17cc6b18db3e3d',
+      '0xcc659e550ea95c2362cb40fa5689a83a72759ee6a5ffd01a4c17cc6b18db3e3d',
+      '0xcc659e550ea95c2362cb40fa5689a83a72759ee6a5ffd01a4c17cc6b18db3e3d',
+      '0xcc659e550ea95c2362cb40fa5689a83a72759ee6a5ffd01a4c17cc6b18db3e3d',
+      '0xcc659e550ea95c2362cb40fa5689a83a72759ee6a5ffd01a4c17cc6b18db3e3d'
+    ],
+    validatorVotesName: [ 'AGREE', 'AGREE', 'AGREE', 'AGREE', 'AGREE' ]
+  },
+  consumedValidators: [
+    '0xC32bD21E1506Ab4954BA1EE8FBD50271Ca61b7DE',
+    '0x58a7b7ac6Cb01843e4e5af117C551E59449E0F49',
+    '0x9F6aa7364D20CF25F054Ea83f3CB950317fD34b6',
+    '0x859dF0816Ed95B22B946C56dBc004b17993d1Ed6',
+    '0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817'
+  ],
+  txExecutionResult: 1,
+  txData: '0xf8dcb8d916046172677315ec01706f6c69637964656c74612d62726164627572792d6c6976652d303031d409466f7220656163682063616c656e646172206d6f6e74682c20746865206167656e7420697320617574686f72697a656420746f207370656e64206e6f206d6f7265207468616e20313230302047454e206f6e2041575320696e6672617374727563747572652e2053656e64696e672066756e647320746f20706572736f6e616c2077616c6c657473206973206e6f74207065726d69747465642e066d6574686f647c70726f706f73655f76657273696f6e00',
+  txDataDecoded: { leaderOnly: false, type: 'call' },
+  numOfInitialValidators: '3',
+  status_name: 'ACCEPTED',
+  resultName: 'AGREE',
+  txExecutionResultName: 'FINISHED_WITH_RETURN'
+}
+
+✔ Write operation successfully executed

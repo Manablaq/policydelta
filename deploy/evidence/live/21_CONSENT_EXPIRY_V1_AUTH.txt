@@ -1,0 +1,7 @@
+[genlayer-js] initializeConsensusSmartContract() is deprecated and will be removed in a future release. The consensus contract is now resolved from the static chain definition.
+- Calling method is_version_authorized on contract at 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E...
+
+Result:
+true
+
+✔ Read operation successfully executed

@@ -1,0 +1,81 @@
+[genlayer-js] initializeConsensusSmartContract() is deprecated and will be removed in a future release. The consensus contract is now resolved from the static chain definition.
+- Calling write method review_version on contract at 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E...
+
+Write Transaction Hash:
+0xbf4e29e2b991f9c6d836d19da3601e74d6a8a8b1d739049bd730d754292dd647
+
+Result:
+{
+  currentTimestamp: '1787528030',
+  sender: '0x1f87Ae197af539253978d435aD45cCf28Fb95024',
+  recipient: '0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E',
+  initialRotations: 3n,
+  txSlot: '26',
+  createdTimestamp: '1787528023',
+  lastVoteTimestamp: '1787528029',
+  randomSeed: '0xf5875dfe63ec96c0296d4b55e426e3cac745060535a4daee8bded52c22e09fdb',
+  result: 0,
+  txExecutionHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
+  txCalldata: '0xf846b843160461726773159c02706f6c69637964656c74612d636f6e73656e742d6578706972792d6c6976652d30303111066d6574686f64747265766965775f76657273696f6e00',
+  eqBlocksOutputs: '0x',
+  queueType: 0,
+  queuePosition: '0',
+  activator: '0xB93a46B843fB32E8Ce392e68eDFE93Faa4a40817',
+  lastLeader: '0xE8fdefdfe18fD8E5B0d576b7CcfC5a29CE43fD7f',
+  status: 13,
+  txId: '0xbf4e29e2b991f9c6d836d19da3601e74d6a8a8b1d739049bd730d754292dd647',
+  readStateBlockRange: {
+    activationBlock: '18868577',
+    processingBlock: '18868580',
+    proposalBlock: '18868586'
+  },
+  numOfRounds: '0',
+  lastRound: {
+    round: '0',
+    leaderIndex: '2',
+    votesCommitted: '0',
+    votesRevealed: '0',
+    appealBond: '0',
+    rotationsLeft: '3',
+    result: 0,
+    roundValidators: [
+      '0xf5E017C93f37E3f03595C03D5A6A98396769C175',
+      '0x3a130401885fD9322E2E21174A5496065f716b35',
+      '0xE8fdefdfe18fD8E5B0d576b7CcfC5a29CE43fD7f',
+      '0xA58D6FcCD69eaafB5869dA58913f116045D75444',
+      '0x3E1E6060f746c78DB2BE0909C30A1f6A41AcD011'
+    ],
+    validatorVotes: [ 0, 0, 0, 0, 0 ],
+    validatorVotesHash: [
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+    ],
+    validatorResultHash: [
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000000000000000000000000000'
+    ],
+    validatorVotesName: [ 'NOT_VOTED', 'NOT_VOTED', 'NOT_VOTED', 'NOT_VOTED', 'NOT_VOTED' ]
+  },
+  consumedValidators: [
+    '0xf5E017C93f37E3f03595C03D5A6A98396769C175',
+    '0x3a130401885fD9322E2E21174A5496065f716b35',
+    '0xE8fdefdfe18fD8E5B0d576b7CcfC5a29CE43fD7f',
+    '0xA58D6FcCD69eaafB5869dA58913f116045D75444',
+    '0x3E1E6060f746c78DB2BE0909C30A1f6A41AcD011'
+  ],
+  txExecutionResult: 0,
+  txData: '0xf846b843160461726773159c02706f6c69637964656c74612d636f6e73656e742d6578706972792d6c6976652d30303111066d6574686f64747265766965775f76657273696f6e00',
+  txDataDecoded: { leaderOnly: false, type: 'call' },
+  numOfInitialValidators: '3',
+  status_name: 'LEADER_TIMEOUT',
+  resultName: 'IDLE',
+  txExecutionResultName: 'NOT_VOTED'
+}
+
+✔ Write operation successfully executed

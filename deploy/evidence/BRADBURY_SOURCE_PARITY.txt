@@ -1,0 +1,16 @@
+PolicyDelta Bradbury Source Parity
+
+Network: GenLayer Bradbury Testnet
+Contract Address: 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E
+Deployment Transaction: 0x66e01ac9797ebdf53a17fc56090bad546940adf3614350c362c711457b9b92ac
+Deployment Status: FINALIZED
+
+Frozen Source Commit: 69835a06e183493c671d74255261e1ab39b63db9
+
+Expected SHA-256: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+Local SHA-256: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+Frozen Commit SHA-256: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+Bradbury Finalized Source SHA-256: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+
+Hash Parity: PASS
+Byte-for-Byte Parity: PASS

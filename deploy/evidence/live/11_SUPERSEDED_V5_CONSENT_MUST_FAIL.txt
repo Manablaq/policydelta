@@ -1,0 +1,81 @@
+[genlayer-js] initializeConsensusSmartContract() is deprecated and will be removed in a future release. The consensus contract is now resolved from the static chain definition.
+- Calling write method consent_to_version on contract at 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E...
+
+Write Transaction Hash:
+0xbc341fb35ed914a33c40a7e3a23a313c3d01fab4d3f1c331ab8a2fac55628a94
+
+Result:
+{
+  currentTimestamp: '1787526677',
+  sender: '0x1f87Ae197af539253978d435aD45cCf28Fb95024',
+  recipient: '0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E',
+  initialRotations: 3n,
+  txSlot: '18',
+  createdTimestamp: '1787526659',
+  lastVoteTimestamp: '1787526673',
+  randomSeed: '0x9dd77f490bec1a6638f4b7409d64d349cae1636d8569bafaa62600551c1eed3f',
+  result: 1,
+  txExecutionHash: '0x60c9e8ebdf2f51871edbae62a38651783f03764c70fd08b88d09b6f28b38e681',
+  txCalldata: '0xf845b84216046172677315ec01706f6c69637964656c74612d62726164627572792d6c6976652d30303129066d6574686f649401636f6e73656e745f746f5f76657273696f6e00',
+  eqBlocksOutputs: '0xc786706164646564',
+  queueType: 0,
+  queuePosition: '0',
+  activator: '0xC32bD21E1506Ab4954BA1EE8FBD50271Ca61b7DE',
+  lastLeader: '0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6',
+  status: 5,
+  txId: '0xbc341fb35ed914a33c40a7e3a23a313c3d01fab4d3f1c331ab8a2fac55628a94',
+  readStateBlockRange: {
+    activationBlock: '18865931',
+    processingBlock: '18865936',
+    proposalBlock: '18865938'
+  },
+  numOfRounds: '0',
+  lastRound: {
+    round: '0',
+    leaderIndex: '2',
+    votesCommitted: '5',
+    votesRevealed: '5',
+    appealBond: '0',
+    rotationsLeft: '3',
+    result: 1,
+    roundValidators: [
+      '0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98',
+      '0x3a130401885fD9322E2E21174A5496065f716b35',
+      '0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6',
+      '0x8E7765267023F88d4155d52F4ce2319aDDf1dc33',
+      '0x7538369A22a176afFccb6B273eedfbb92780bf22'
+    ],
+    validatorVotes: [ 2, 2, 2, 2, 2 ],
+    validatorVotesHash: [
+      '0xfee12a9cfd2f75be0411cf600d8401012d79be22bdffe79407a1f5a5402fbb53',
+      '0x2fe151f25f3a211b59aeeac18dd216bc80c8d990fd1ff5ce1fd161dbf5c7bcd4',
+      '0x69fe725d56415759bc64f35a70109f8e735ac49afbe451cd8da039d67ebc1d63',
+      '0xc823f3ed50f971fa3eeecf5b15b659c6066faa67a1e2c9ae47d786f6bbbfd643',
+      '0xd4bdf5d9a32919e1eb816c783a0a984c5a5372b92c9b14a57be4afeac873193e'
+    ],
+    validatorResultHash: [
+      '0xc501cf30410a83e33dc8be518980c27441bb8828284380a06d135f618fe602cf',
+      '0xc501cf30410a83e33dc8be518980c27441bb8828284380a06d135f618fe602cf',
+      '0xc501cf30410a83e33dc8be518980c27441bb8828284380a06d135f618fe602cf',
+      '0xc501cf30410a83e33dc8be518980c27441bb8828284380a06d135f618fe602cf',
+      '0xc501cf30410a83e33dc8be518980c27441bb8828284380a06d135f618fe602cf'
+    ],
+    validatorVotesName: [ 'DISAGREE', 'DISAGREE', 'DISAGREE', 'DISAGREE', 'DISAGREE' ]
+  },
+  consumedValidators: [
+    '0x27276953fa2052A5178Ae5a3D114a3DFB9A2fC98',
+    '0x3a130401885fD9322E2E21174A5496065f716b35',
+    '0x9D998aD7C7f9Cc448A4DbDf49edD7CADBe3d57B6',
+    '0x8E7765267023F88d4155d52F4ce2319aDDf1dc33',
+    '0x7538369A22a176afFccb6B273eedfbb92780bf22'
+  ],
+  txExecutionResult: 2,
+  txData: '0xf845b84216046172677315ec01706f6c69637964656c74612d62726164627572792d6c6976652d30303129066d6574686f649401636f6e73656e745f746f5f76657273696f6e00',
+  txDataDecoded: { leaderOnly: false, type: 'call' },
+  numOfInitialValidators: '3',
+  status_name: 'ACCEPTED',
+  resultName: 'AGREE',
+  txExecutionResultName: 'FINISHED_WITH_ERROR'
+}
+
+✔ Write operation successfully executed

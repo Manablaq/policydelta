@@ -1,0 +1,16 @@
+[genlayer-js] initializeConsensusSmartContract() is deprecated and will be removed in a future release. The consensus contract is now resolved from the static chain definition.
+- Calling method get_policy on contract at 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E...
+
+Result:
+{
+  active_version: 3,
+  consent_ttl_seconds: 7200,
+  materiality_rules: 'Re-consent is required for any material change to permissions, spending limits, permitted recipients or actions, obligations, or safety constraints. Any increase or decrease in economic authority is material. Any expansion or reduction of permission is material. Any addition or removal of an obligation is material. Any weakening or strengthening of a safety-critical constraint is material. Pure wording, formatting, paragraph reordering, or semantic-preserving clarification is NON_MATERIAL.',
+  next_version: 4,
+  open_version: 0,
+  principal: '0x1f87Ae197af539253978d435aD45cCf28Fb95024',
+  publisher: '0x1f87Ae197af539253978d435aD45cCf28Fb95024',
+  review_ttl_seconds: 7200
+}
+
+✔ Read operation successfully executed

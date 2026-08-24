@@ -1,0 +1,19 @@
+[genlayer-js] initializeConsensusSmartContract() is deprecated and will be removed in a future release. The consensus contract is now resolved from the static chain definition.
+- Calling method get_version on contract at 0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E...
+
+Result:
+{
+  change_class: 'NON_MATERIAL',
+  consent_deadline: 0,
+  created_at: 1787527708,
+  parent_version: 0,
+  policy_id: 'policydelta-consent-expiry-live-001',
+  policy_text: 'The agent may spend up to 100 GEN per calendar month on AWS infrastructure. Transfers to personal wallets are prohibited.',
+  publisher: '0x1f87Ae197af539253978d435aD45cCf28Fb95024',
+  requires_reconsent: false,
+  review_deadline: 0,
+  status: 'ACTIVE',
+  version: 1
+}
+
+✔ Read operation successfully executed
