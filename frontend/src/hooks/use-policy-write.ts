@@ -33,8 +33,8 @@ export function usePolicyWrite() {
   const {
     address,
     isBradbury,
-    writeClient,
     ensureBradbury,
+    prepareWriteClient,
   } = useWallet();
 
   const { trackTransaction } =
@@ -48,7 +48,7 @@ export function usePolicyWrite() {
       policyId,
       version,
     }: SubmitWriteInput) => {
-      if (!address || !writeClient) {
+      if (!address) {
         const message =
           "Connect your wallet before submitting a PolicyDelta transaction.";
 
@@ -61,8 +61,11 @@ export function usePolicyWrite() {
           await ensureBradbury();
         }
 
+        const verifiedWriteClient =
+          await prepareWriteClient();
+
         const hash =
-          await writeClient.writeContract({
+          await verifiedWriteClient.writeContract({
             address:
               POLICY_DELTA_ADDRESS,
             functionName,
@@ -73,6 +76,7 @@ export function usePolicyWrite() {
         trackTransaction({
           hash,
           title,
+          functionName,
           policyId,
           version,
         });
@@ -92,16 +96,15 @@ export function usePolicyWrite() {
       address,
       ensureBradbury,
       isBradbury,
+      prepareWriteClient,
       trackTransaction,
-      writeClient,
     ],
   );
 
   return {
     address,
-    canWrite: Boolean(
-      address && writeClient,
-    ),
+    canWrite:
+      Boolean(address),
     submitWrite,
   };
 }

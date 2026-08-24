@@ -8,6 +8,9 @@ import {
   usePolicyVersion,
 } from "@/hooks/use-policy";
 import {
+  useWalletPolicySummaries,
+} from "@/hooks/use-wallet-policies";
+import {
   humanizeEnum,
   statusClasses,
 } from "@/lib/contract/presentation";
@@ -37,6 +40,11 @@ export function CompareWorkspace({
 }) {
   const router = useRouter();
 
+  const {
+    policies: walletPolicies,
+    loading: walletPoliciesLoading,
+  } = useWalletPolicySummaries();
+
   const [policyId, setPolicyId] =
     useState(initialPolicyId);
 
@@ -53,6 +61,81 @@ export function CompareWorkspace({
         ? String(initialTo)
         : "",
     );
+
+  const selectedIndexedPolicy =
+    walletPolicies.find(
+      (item) =>
+        item.policyId === policyId,
+    ) ?? null;
+
+  const availableVersions =
+    selectedIndexedPolicy
+      ? Array.from(
+          {
+            length: Math.max(
+              0,
+              selectedIndexedPolicy.nextVersion -
+                1,
+            ),
+          },
+          (_, index) => index + 1,
+        )
+      : [];
+
+  function chooseIndexedPolicy(
+    nextPolicyId: string,
+  ) {
+    setPolicyId(nextPolicyId);
+
+    const selected =
+      walletPolicies.find(
+        (item) =>
+          item.policyId ===
+          nextPolicyId,
+      );
+
+    if (!selected) {
+      return;
+    }
+
+    if (
+      selected.openVersion > 0
+    ) {
+      setFromVersion(
+        String(
+          selected.activeVersion,
+        ),
+      );
+
+      setToVersion(
+        String(
+          selected.openVersion,
+        ),
+      );
+
+      return;
+    }
+
+    const latest =
+      Math.max(
+        1,
+        selected.nextVersion - 1,
+      );
+
+    const previous =
+      Math.max(
+        1,
+        latest - 1,
+      );
+
+    setFromVersion(
+      String(previous),
+    );
+
+    setToVersion(
+      String(latest),
+    );
+  }
 
   const hasSelection =
     Boolean(initialPolicyId) &&
@@ -103,6 +186,71 @@ export function CompareWorkspace({
 
   return (
     <div className="space-y-4">
+      {(walletPoliciesLoading ||
+        walletPolicies.length > 0) && (
+        <section className="panel p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-[650px]">
+              <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[var(--accent)]">
+                Connected wallet
+              </p>
+
+              <h2 className="mt-2 text-lg font-semibold tracking-[-0.03em]">
+                Compare one of your policies
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+                Choose an indexed policy and PolicyDelta will populate its real recorded version range from Bradbury. You can still enter any exact policy ID manually below.
+              </p>
+            </div>
+
+            <label className="block w-full lg:max-w-[360px]">
+              <span className="mb-2 block text-xs font-semibold text-[var(--muted)]">
+                Your indexed policy
+              </span>
+
+              <select
+                aria-label="Your indexed policy"
+                value={
+                  selectedIndexedPolicy
+                    ?.policyId ?? ""
+                }
+                onChange={(event) =>
+                  chooseIndexedPolicy(
+                    event.target.value,
+                  )
+                }
+                disabled={
+                  walletPoliciesLoading
+                }
+                className="form-input"
+              >
+                <option value="">
+                  {walletPoliciesLoading
+                    ? "Loading wallet policies…"
+                    : "Choose a policy"}
+                </option>
+
+                {walletPolicies.map(
+                  (item) => (
+                    <option
+                      key={
+                        item.policyId
+                      }
+                      value={
+                        item.policyId
+                      }
+                    >
+                      {item.policyId}
+                    </option>
+                  ),
+                )}
+              </select>
+            </label>
+          </div>
+        </section>
+      )}
+
       <form
         onSubmit={submit}
         className="panel p-5"
@@ -132,19 +280,44 @@ export function CompareWorkspace({
           </Field>
 
           <Field label="From">
-            <input
-              type="number"
-              min={1}
-              step={1}
-              value={fromVersion}
-              onChange={(event) =>
-                setFromVersion(
-                  event.target.value,
-                )
-              }
-              placeholder="Version"
-              className="form-input"
-            />
+            {selectedIndexedPolicy ? (
+              <select
+                aria-label="From version"
+                value={fromVersion}
+                onChange={(event) =>
+                  setFromVersion(
+                    event.target.value,
+                  )
+                }
+                className="form-input"
+              >
+                {availableVersions.map(
+                  (version) => (
+                    <option
+                      key={version}
+                      value={version}
+                    >
+                      V{version}
+                    </option>
+                  ),
+                )}
+              </select>
+            ) : (
+              <input
+                aria-label="From version"
+                type="number"
+                min={1}
+                step={1}
+                value={fromVersion}
+                onChange={(event) =>
+                  setFromVersion(
+                    event.target.value,
+                  )
+                }
+                placeholder="Version"
+                className="form-input"
+              />
+            )}
           </Field>
 
           <ArrowRight
@@ -153,19 +326,44 @@ export function CompareWorkspace({
           />
 
           <Field label="To">
-            <input
-              type="number"
-              min={1}
-              step={1}
-              value={toVersion}
-              onChange={(event) =>
-                setToVersion(
-                  event.target.value,
-                )
-              }
-              placeholder="Version"
-              className="form-input"
-            />
+            {selectedIndexedPolicy ? (
+              <select
+                aria-label="To version"
+                value={toVersion}
+                onChange={(event) =>
+                  setToVersion(
+                    event.target.value,
+                  )
+                }
+                className="form-input"
+              >
+                {availableVersions.map(
+                  (version) => (
+                    <option
+                      key={version}
+                      value={version}
+                    >
+                      V{version}
+                    </option>
+                  ),
+                )}
+              </select>
+            ) : (
+              <input
+                aria-label="To version"
+                type="number"
+                min={1}
+                step={1}
+                value={toVersion}
+                onChange={(event) =>
+                  setToVersion(
+                    event.target.value,
+                  )
+                }
+                placeholder="Version"
+                className="form-input"
+              />
+            )}
           </Field>
 
           <button

@@ -1,5 +1,8 @@
 "use client";
 
+import { useAccount } from "@/providers/account-provider";
+import type { PolicyWriteFunction } from "@/lib/account/validation";
+
 import {
   readClient,
   type GenLayerTransactionHash,
@@ -19,6 +22,7 @@ import { toast } from "sonner";
 export type TrackedTransaction = {
   hash: GenLayerTransactionHash;
   title: string;
+  functionName?: PolicyWriteFunction;
   policyId?: string;
   version?: number;
   consensusStatus: string;
@@ -32,6 +36,7 @@ export type TrackedTransaction = {
 type TrackInput = {
   hash: GenLayerTransactionHash;
   title: string;
+  functionName?: PolicyWriteFunction;
   policyId?: string;
   version?: number;
 };
@@ -262,6 +267,22 @@ function restoreTransaction(
   }
 
   if (
+    typeof data.functionName ===
+      "string" &&
+    [
+      "create_policy",
+      "propose_version",
+      "review_version",
+      "consent_to_version",
+      "reject_version",
+      "recover_expired_version",
+    ].includes(data.functionName)
+  ) {
+    item.functionName =
+      data.functionName as PolicyWriteFunction;
+  }
+
+  if (
     typeof data.version === "number" &&
     Number.isFinite(data.version)
   ) {
@@ -329,6 +350,9 @@ export function TransactionProvider({
 }) {
   const queryClient =
     useQueryClient();
+
+  const { indexActivity } =
+    useAccount();
 
   const [transactions, setTransactions] =
     useState<TrackedTransaction[]>([]);
@@ -510,6 +534,21 @@ export function TransactionProvider({
 
           commit(next);
 
+          const indexableChange =
+            current.consensusStatus !==
+              state.consensusStatus ||
+            current.executionStatus !==
+              state.executionStatus;
+
+          if (
+            indexableChange &&
+            current.functionName
+          ) {
+            await indexActivity({
+              hash: current.hash,
+            }).catch(() => undefined);
+          }
+
           if (shouldRefreshState) {
             await queryClient.invalidateQueries(
               {
@@ -570,7 +609,11 @@ export function TransactionProvider({
           // Preserve the last trustworthy state.
         }
       },
-      [commit, queryClient],
+      [
+        commit,
+        indexActivity,
+        queryClient,
+      ],
     );
 
   const trackTransaction =

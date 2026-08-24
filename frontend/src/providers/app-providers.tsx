@@ -1,5 +1,6 @@
 "use client";
 
+import { AccountProvider } from "@/providers/account-provider";
 import { TransactionProvider } from "@/providers/transaction-provider";
 import { WalletProvider } from "@/providers/wallet-provider";
 import {
@@ -43,9 +44,11 @@ export function AppProviders({
         client={queryClient}
       >
         <WalletProvider>
-          <TransactionProvider>
-            {children}
-          </TransactionProvider>
+          <AccountProvider>
+            <TransactionProvider>
+              {children}
+            </TransactionProvider>
+          </AccountProvider>
         </WalletProvider>
 
         <Toaster
