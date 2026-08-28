@@ -53,7 +53,7 @@ a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
 Verified:
 
 ```text
-22/22 PASS
+30/30 PASS
 ```
 
 ## Bradbury validation
@@ -71,6 +71,12 @@ Verified:
 ## Finality semantics
 
 - [x] `ACCEPTED` is not presented as `FINALIZED`.
+- [x] Authority reads explicitly use `LATEST_FINAL`.
+- [x] `LATEST_NONFINAL` is isolated to provisional review surveillance.
+- [x] Permissionless reviews are surfaced to the affected principal regardless of submitter.
+- [x] Accepted automatic activations show finalized and provisional text side by side.
+- [x] Appeal eligibility and minimum bond are read from GenLayer.
+- [x] The principal can submit the native GenLayer appeal action.
 - [x] Consensus and execution states are separate.
 - [x] `FINISHED_WITH_ERROR` is never treated as successful execution.
 
@@ -100,8 +106,18 @@ Verified:
 Verified:
 
 ```text
-26/26 PASS
+28/28 PASS
 ```
+
+## Post-review live evidence
+
+- [x] Local false-negative surfacing regression passes.
+- [x] Local wallet appeal-submission regression passes.
+- [ ] Production frontend containing the remediation is deployed.
+- [ ] A Bradbury accepted `NON_MATERIAL` false-negative scenario is captured during its appeal window.
+- [ ] The principal's live alert and appeal transaction are recorded with hashes/screenshots.
+
+Unchecked items must be completed before claiming the review request is fully closed on the live deployment.
 
 ## Account architecture
 

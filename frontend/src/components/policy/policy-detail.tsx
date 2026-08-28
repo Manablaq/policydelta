@@ -199,7 +199,7 @@ export function PolicyDetail({
 
         <div className="space-y-4">
           <AuthorityCard
-            label="Active authority"
+              label="Finalized authority"
             version={active.data}
             loading={active.isPending}
             authorized={
@@ -308,7 +308,7 @@ export function PolicyDetail({
             </h2>
 
             <p className="mt-2 max-w-[680px] text-sm leading-6 text-[var(--muted)]">
-              Versions are read individually from Bradbury using the policy&apos;s on-chain next-version pointer.
+              Versions and authorization are read from Bradbury&apos;s finalized state. Accepted review results are surfaced separately during the protocol appeal window.
             </p>
           </div>
 

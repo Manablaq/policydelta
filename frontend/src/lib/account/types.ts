@@ -20,8 +20,29 @@ export type WalletActivityRecord = {
   consensusStatus: string;
   executionStatus: string;
   methodVerified: boolean;
+  relationship:
+    | "submitted"
+    | "affected_principal";
   submittedAt: string;
   updatedAt: string;
+};
+
+export type PrincipalReviewAlert = {
+  hash: string;
+  policyId: string;
+  version: number;
+  previousFinalizedVersion: number;
+  previousFinalizedPolicyText: string;
+  provisionalPolicyText: string;
+  consensusStatus: string;
+  executionStatus: string;
+  changeClass: string;
+  requiresReconsent: boolean;
+  canAppeal: boolean;
+  appealCheckAvailable: boolean;
+  minAppealBond: string | null;
+  appealCheckedAt: string;
+  submittedAt: string;
 };
 
 export type WalletAccountSnapshot = {
@@ -31,4 +52,6 @@ export type WalletAccountSnapshot = {
   scannedToBlock: number;
   policies: WalletPolicyRecord[];
   activity: WalletActivityRecord[];
+  principalReviewAlerts:
+    PrincipalReviewAlert[];
 };

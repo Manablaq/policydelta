@@ -138,6 +138,16 @@ FINISHED_WITH_RETURN
 
 A finalized transaction with `FINISHED_WITH_ERROR` remains a failure.
 
+Policy authority reads explicitly use `LATEST_FINAL`. Accepted automatic `NON_MATERIAL` review results are discovered through a separate `LATEST_NONFINAL` path and never replace finalized authority in the UI before finality.
+
+For a connected principal, the global appeal alert:
+
+- discovers `review_version` transactions regardless of submitter;
+- displays finalized and provisional policy text side by side;
+- checks `canAppeal` and `getMinAppealBond` through GenLayerJS;
+- submits the native appeal with `appealTransaction`;
+- refreshes every 30 seconds, on focus, and after appeal submission.
+
 ## Browser persistence
 
 Recent submitted transaction references may be persisted locally for transaction UX.
@@ -182,7 +192,7 @@ npm run test:e2e
 Verified browser regression:
 
 ```text
-26/26 PASS
+28/28 PASS
 ```
 
 ## Real Bradbury account test

@@ -192,7 +192,7 @@ export function AccountOverview() {
               </p>
 
               <h2 className="mt-2 text-xl font-semibold tracking-[-0.035em]">
-                Live Bradbury authority
+                Finalized Bradbury authority
               </h2>
             </div>
 

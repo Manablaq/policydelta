@@ -42,10 +42,10 @@ python -m pytest \
 Verified result:
 
 ```text
-22/22 PASS
+30/30 PASS
 ```
 
-The Direct Mode suite covers state-machine and reviewer-sensitive contract behavior.
+The Direct Mode suite covers state-machine and reviewer-sensitive contract behavior. Eight parameterized cases come from `tests/corpus/adversarial_semantic_regressions.json` and bind adversarial material verdicts to the fail-closed consent path.
 
 ## GenVM verification
 
@@ -173,7 +173,7 @@ npm run test:e2e
 Verified browser suite:
 
 ```text
-26/26 PASS
+28/28 PASS
 ```
 
 ## Browser coverage
@@ -191,10 +191,21 @@ The frontend suite covers:
 - Evidence page;
 - transaction persistence;
 - finality semantics;
+- finalized authority versus provisional accepted state;
+- permissionless review surfacing to the affected principal;
+- live appeal eligibility, minimum bond, and wallet appeal submission;
 - execution-failure semantics;
 - wallet permissions;
 - multi-provider selection;
 - explicit write provider binding.
+
+The principal appeal regressions are in:
+
+```text
+frontend/tests/e2e/principal-appeal.spec.ts
+```
+
+They intentionally model a materially authority-changing proposal that has been incorrectly agreed as `NON_MATERIAL` and prove that the principal sees it before finality without the provisional version becoming the application's authority source.
 
 ## Real Bradbury account reconstruction
 

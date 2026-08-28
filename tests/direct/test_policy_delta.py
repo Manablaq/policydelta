@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import pytest
 
 
@@ -27,6 +28,14 @@ and may reimburse approved contractors.
 """.strip()
 
 PROMPT_PATTERN = r"You are evaluating whether a proposed AI-agent policy update materially changes"
+
+ADVERSARIAL_CASES = json.loads(
+    (
+        Path(__file__).resolve().parents[1]
+        / "corpus"
+        / "adversarial_semantic_regressions.json"
+    ).read_text()
+)
 
 
 def as_hex_address(value) -> str:
@@ -481,4 +490,53 @@ def test_extra_semantic_output_fields_fail_closed(
         contract.review_version(POLICY_ID, version)
 
     assert contract.get_policy(POLICY_ID)["active_version"] == 1
+    assert contract.is_version_authorized(POLICY_ID, version) is False
+
+
+@pytest.mark.parametrize(
+    "case",
+    ADVERSARIAL_CASES,
+    ids=[case["id"] for case in ADVERSARIAL_CASES],
+)
+def test_adversarial_material_change_never_authorizes_without_principal_consent(
+    case,
+    direct_vm,
+    direct_deploy,
+    direct_owner,
+    direct_alice,
+):
+    """Bind every adversarial corpus verdict to the fail-closed material path.
+
+    Direct Mode mocks the semantic answer; live Bradbury runs are separately
+    required to measure whether real validator cohorts classify the corpus correctly.
+    """
+    direct_vm.strict_mocks = True
+    contract = deploy(direct_deploy)
+
+    direct_vm.sender = direct_owner
+    contract.create_policy(
+        POLICY_ID,
+        as_hex_address(direct_alice),
+        case["old_policy"],
+        RULES,
+        3600,
+        3600,
+    )
+
+    with direct_vm.prank(direct_alice):
+        version = contract.propose_version(POLICY_ID, case["new_policy"])
+
+    mock_decision(direct_vm, True, case["expected_change_class"])
+    contract.review_version(POLICY_ID, version)
+
+    direct_vm.clear_mocks()
+    mock_decision(direct_vm, True, case["expected_change_class"])
+    assert direct_vm.run_validator() is True
+
+    reviewed = contract.get_version(POLICY_ID, version)
+    assert reviewed["requires_reconsent"] is True
+    assert reviewed["change_class"] == case["expected_change_class"]
+    assert reviewed["status"] == "AWAITING_CONSENT"
+    assert contract.get_policy(POLICY_ID)["active_version"] == 1
+    assert contract.is_version_authorized(POLICY_ID, 1) is True
     assert contract.is_version_authorized(POLICY_ID, version) is False

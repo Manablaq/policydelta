@@ -170,7 +170,7 @@ export function PolicyLookup() {
 
               <div className="space-y-4">
                 <VersionCard
-                  title="Active authority"
+                  title="Finalized authority"
                   version={
                     active.data
                   }

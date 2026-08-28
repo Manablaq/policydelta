@@ -95,4 +95,25 @@ A new proposal can be created even while an earlier proposal is open. The earlie
 
 ## Finality
 
-Application UX must distinguish GenLayer `ACCEPTED` from `FINALIZED`. A transaction that is only accepted must not be represented as irreversible. Production integration must track the finality window before presenting a newly active policy as permanently settled.
+Application UX must distinguish GenLayer `ACCEPTED` from `FINALIZED`. A transaction that is only accepted must not be represented as irreversible or enforceable authority.
+
+Normative integration requirements:
+
+1. Authority and `is_version_authorized()` reads MUST use the explicit latest-finalized transaction-hash variant.
+2. Latest-non-final state MAY be read only to surface provisional review results and transaction progress.
+3. An accepted automatic `NON_MATERIAL` activation MUST show the prior finalized version as the current authority until the review transaction finalizes.
+4. Review transactions affecting a principal MUST be discovered regardless of which account triggered the permissionless review.
+5. When the protocol reports the transaction appealable, the principal UI MUST display both policy texts, the review transaction, live eligibility, minimum bond, and a native GenLayer appeal action.
+6. The application MUST refresh the alert on a bounded interval, on window focus/reconnect, and after appeal submission.
+
+These requirements use GenLayer Optimistic Democracy's existing acceptance-to-finality appeal window; PolicyDelta does not introduce a second application-level challenge window.
+
+## Adversarial semantic regressions
+
+The canonical corpus is stored at:
+
+```text
+tests/corpus/adversarial_semantic_regressions.json
+```
+
+It covers modal weakening, recipient-scope expansion, period/unit obfuscation, buried exceptions, negated prohibitions, permission reduction, semantic-noise camouflage, and embedded prompt injection. Direct Mode verifies that the expected material verdicts cannot authorize without principal consent. Live Bradbury validation is separately required to measure real validator classification behavior.

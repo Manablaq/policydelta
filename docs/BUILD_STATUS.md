@@ -1,4 +1,4 @@
-# PolicyDelta Build Status — 2026-08-24
+# PolicyDelta Build Status — 2026-08-28
 
 ## Current state
 
@@ -14,9 +14,10 @@ PolicyDelta has completed:
 - production frontend implementation;
 - browser E2E regression;
 - chain-native wallet-history reconstruction;
-- normal Git-integrated Vercel production deployment.
+- normal Git-integrated Vercel production deployment;
+- local appeal/finality remediation and regression verification.
 
-The current work is reviewer-facing documentation and submission preparation.
+The current remediation candidate is locally complete. Publishing it to the stable Vercel URL and capturing a real Bradbury appeal-window run remain required before resubmission.
 
 ## Contract identity
 
@@ -41,7 +42,7 @@ Freeze commit:
 
 ```text
 Direct Mode:
-22/22 PASS
+30/30 PASS
 
 GenVM validation:
 PASS
@@ -104,7 +105,7 @@ deploy/evidence/BRADBURY_VALIDATION_SUMMARY.md
 https://policydelta.vercel.app
 ```
 
-Verified frontend implementation commit:
+Current production frontend commit (pre-remediation):
 
 ```text
 34052de0841e54939c6119b0fee58c67e5e958bb
@@ -120,7 +121,7 @@ Production build:
 PASS
 
 Playwright:
-26/26 PASS
+28/28 PASS
 
 Real Bradbury account reconstruction:
 PASS
@@ -129,7 +130,10 @@ Multi-provider wallet isolation:
 PASS
 
 Production deployment:
-PASS
+LIVE — remediation publish pending
+
+Appeal/finality remediation candidate:
+LOCAL PASS
 ```
 
 ## Account architecture
@@ -140,6 +144,6 @@ No private account database or manual historical import is required.
 
 ## Release readiness
 
-The product implementation, Bradbury validation, production frontend, production screenshots, and reviewer-facing documentation are complete and undergoing final release verification.
+The implementation, local regressions, historical Bradbury validation, and reviewer-facing documentation are complete. Production publication and the live checklist in `deploy/evidence/APPEAL_FINALITY_VALIDATION.md` remain open.
 
-No additional Intelligent Contract deployment is required for this release.
+No additional Intelligent Contract deployment is required because the remediation preserves the frozen deployed contract source and changes integration read/appeal behavior.

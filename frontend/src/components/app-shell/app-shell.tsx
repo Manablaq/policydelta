@@ -1,6 +1,7 @@
 "use client";
 
 import { BrandMark } from "@/components/brand/brand-mark";
+import { PrincipalAppealCenter } from "@/components/account/principal-appeal-center";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { TransactionCenter } from "@/components/transaction/transaction-center";
 import { WalletButton } from "@/components/wallet/wallet-button";
@@ -156,6 +157,7 @@ export function AppShell({
         </header>
 
         <main className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          <PrincipalAppealCenter />
           {children}
         </main>
       </div>

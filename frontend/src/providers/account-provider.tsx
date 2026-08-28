@@ -24,6 +24,8 @@ type AccountContextValue = {
     WalletAccountSnapshot["policies"];
   activity:
     WalletAccountSnapshot["activity"];
+  principalReviewAlerts:
+    WalletAccountSnapshot["principalReviewAlerts"];
   isLoading: boolean;
   isRefreshing: boolean;
   error: string | null;
@@ -168,6 +170,10 @@ export function AccountProvider({
         activity:
           query.data
             ?.activity ??
+          [],
+        principalReviewAlerts:
+          query.data
+            ?.principalReviewAlerts ??
           [],
         isLoading:
           Boolean(
