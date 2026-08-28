@@ -11,6 +11,7 @@ STATUSES = {
     "REJECTED",
     "EXPIRED",
     "SUPERSEDED",
+    "REPLACED",
 }
 
 
@@ -33,6 +34,17 @@ def main() -> None:
 
     print("AUTHORIZATION MODEL: PASS")
     print("FAIL-CLOSED STATES: PASS")
+
+    # An accepted NON_MATERIAL review can expose a provisional state where V2
+    # appears active. Authority consumers must continue querying the finalized
+    # snapshot, which still authorizes V1 until the appeal path completes.
+    finalized_active = 1
+    provisional_active = 2
+    assert authorized(1, finalized_active, "ACTIVE") is True
+    assert authorized(2, finalized_active, "ACTIVE") is False
+    assert authorized(2, provisional_active, "ACTIVE") is True
+
+    print("FINALIZED AUTHORITY BOUNDARY: PASS")
 
 
 if __name__ == "__main__":

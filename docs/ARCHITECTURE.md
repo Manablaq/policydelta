@@ -233,6 +233,23 @@ The application does not maintain a competing historical account index.
 
 Contract reads use the Bradbury GenLayer client.
 
+PolicyDelta uses two deliberately separate state views:
+
+```text
+LATEST_FINAL
+  → policy cards
+  → active version
+  → exact authorization
+  → enforcement-facing authority
+
+LATEST_NONFINAL
+  → accepted review surveillance only
+  → provisional old/new comparison
+  → appeal eligibility and bond
+```
+
+The non-final view is never passed to `is_version_authorized` consumers as settled authority.
+
 Important read operations include:
 
 - policy;
@@ -268,6 +285,21 @@ flowchart LR
 
     A -.->|"not final"| N["No success claim"]
 ```
+
+For an automatic `NON_MATERIAL` review, the accepted transaction can contain a provisional active version before finality. PolicyDelta therefore keeps the prior finalized version authoritative in the application while independently surfacing the provisional result to the principal.
+
+```mermaid
+flowchart LR
+    REVIEW["review_version by any account"] --> ACCEPTED["ACCEPTED NON_MATERIAL"]
+    ACCEPTED --> WATCH["Principal watcher"]
+    WATCH --> DIFF["Finalized vs provisional text"]
+    WATCH --> ELIGIBLE["canAppeal + minimum bond"]
+    ELIGIBLE --> APPEAL["Native GenLayer appeal"]
+    ACCEPTED --> FINALIZED["FINALIZED if unappealed/upheld"]
+    FINALIZED --> AUTH["Replacement enters finalized authority view"]
+```
+
+Discovery is policy-centric rather than submitter-centric: a permissionless review appears in the affected principal's activity and appeal center even when the principal did not originate it.
 
 PolicyDelta therefore does not equate:
 

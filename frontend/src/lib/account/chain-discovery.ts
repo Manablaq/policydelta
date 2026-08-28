@@ -1,4 +1,5 @@
 import type {
+  PrincipalReviewAlert,
   WalletAccountSnapshot,
   WalletActivityRecord,
   WalletPolicyRecord,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/contract/config";
 import {
   readPolicy,
+  readVersion,
 } from "@/lib/contract/read";
 import {
   type GenLayerTransactionHash,
@@ -82,25 +84,44 @@ let eventCache:
 async function rpc<T>(
   method: string,
   params: unknown[],
+  timeoutMs = 20_000,
 ): Promise<T> {
-  const response =
-    await fetch(
-      BRADBURY_RPC,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method,
-          params,
-        }),
-        cache: "no-store",
-      },
+  const controller =
+    new AbortController();
+
+  const timeout =
+    setTimeout(
+      () =>
+        controller.abort(),
+      timeoutMs,
     );
+
+  let response: Response;
+
+  try {
+    response =
+      await fetch(
+        BRADBURY_RPC,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: 1,
+            method,
+            params,
+          }),
+          cache: "no-store",
+          signal:
+            controller.signal,
+        },
+      );
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     throw new Error(
@@ -347,53 +368,53 @@ async function fetchLogs(
             ),
         },
       ],
+      8_000,
     );
   } catch {
-    const logs:
-      RpcLog[] = [];
+    const ranges: Array<{
+      start: number;
+      end: number;
+    }> = [];
 
     for (
-      let cursor =
-        fromBlock;
-      cursor <=
-      toBlock;
-      cursor +=
-        LOG_CHUNK_SIZE
+      let cursor = fromBlock;
+      cursor <= toBlock;
+      cursor += LOG_CHUNK_SIZE
     ) {
-      const end =
-        Math.min(
+      ranges.push({
+        start: cursor,
+        end: Math.min(
           toBlock,
           cursor +
             LOG_CHUNK_SIZE -
             1,
-        );
-
-      const batch =
-        await rpc<
-          RpcLog[]
-        >(
-          "eth_getLogs",
-          [
-            {
-              ...filter,
-              fromBlock:
-                blockHex(
-                  cursor,
-                ),
-              toBlock:
-                blockHex(
-                  end,
-                ),
-            },
-          ],
-        );
-
-      logs.push(
-        ...batch,
-      );
+        ),
+      });
     }
 
-    return logs;
+    const batches =
+      await mapConcurrent(
+        ranges,
+        RPC_CONCURRENCY,
+        ({
+          start,
+          end,
+        }) =>
+          rpc<RpcLog[]>(
+            "eth_getLogs",
+            [
+              {
+                ...filter,
+                fromBlock:
+                  blockHex(start),
+                toBlock:
+                  blockHex(end),
+              },
+            ],
+          ),
+      );
+
+    return batches.flat();
   }
 }
 
@@ -846,22 +867,204 @@ export async function discoverWalletAccount(
       ),
     );
 
+  const principalPolicyIds =
+    new Set(
+      policies
+        .filter(
+          (policy) =>
+            policy.role ===
+              "principal" ||
+            policy.role === "both",
+        )
+        .map(
+          (policy) =>
+            policy.policyId,
+        ),
+    );
+
+  const principalReviewAlerts =
+    (
+      await mapConcurrent(
+        history.filter(
+          (item) =>
+            item.functionName ===
+              "review_version" &&
+            typeof item.policyId ===
+              "string" &&
+            typeof item.version ===
+              "number" &&
+            item.version > 0 &&
+            principalPolicyIds.has(
+              item.policyId,
+            ) &&
+            item.executionStatus ===
+              "FINISHED_WITH_RETURN" &&
+            item.consensusStatus !==
+              "FINALIZED" &&
+            item.consensusStatus !==
+              "CANCELED",
+        ),
+        RPC_CONCURRENCY,
+        async (
+          item,
+        ): Promise<
+          PrincipalReviewAlert | null
+        > => {
+          const policyId =
+            item.policyId as string;
+          const version =
+            item.version as number;
+
+          try {
+            const [
+              provisional,
+              finalizedPolicy,
+            ] = await Promise.all([
+              readVersion(
+                policyId,
+                version,
+                "provisional",
+              ),
+              readPolicy(
+                policyId,
+                "finalized",
+              ),
+            ]);
+
+            if (
+              provisional.status !==
+                "ACTIVE" ||
+              provisional.requiresReconsent ||
+              provisional.changeClass !==
+                "NON_MATERIAL"
+            ) {
+              return null;
+            }
+
+            const previousFinalized =
+              await readVersion(
+                policyId,
+                finalizedPolicy.activeVersion,
+                "finalized",
+              );
+
+            let canAppeal = false;
+            let appealCheckAvailable =
+              false;
+            let minAppealBond:
+              | string
+              | null = null;
+
+            try {
+              canAppeal =
+                await readClient.canAppeal({
+                  txId:
+                    item.hash as GenLayerTransactionHash,
+                });
+              appealCheckAvailable =
+                true;
+
+              if (canAppeal) {
+                minAppealBond =
+                  (
+                    await readClient
+                      .getMinAppealBond({
+                        txId:
+                          item.hash as GenLayerTransactionHash,
+                      })
+                  ).toString();
+              }
+            } catch {
+              // Preserve the alert when an appeal
+              // metadata read is temporarily unavailable.
+            }
+
+            return {
+              hash: item.hash,
+              policyId,
+              version,
+              previousFinalizedVersion:
+                finalizedPolicy.activeVersion,
+              previousFinalizedPolicyText:
+                previousFinalized.policyText,
+              provisionalPolicyText:
+                provisional.policyText,
+              consensusStatus:
+                item.consensusStatus,
+              executionStatus:
+                item.executionStatus,
+              changeClass:
+                provisional.changeClass,
+              requiresReconsent:
+                provisional.requiresReconsent,
+              canAppeal,
+              appealCheckAvailable,
+              minAppealBond,
+              appealCheckedAt:
+                new Date()
+                  .toISOString(),
+              submittedAt:
+                isoTimestamp(
+                  item.timestampMs,
+                ),
+            };
+          } catch {
+            return null;
+          }
+        },
+      )
+    )
+      .filter(
+        (
+          alert,
+        ): alert is PrincipalReviewAlert =>
+          alert !== null,
+      )
+      .sort(
+        (
+          left,
+          right,
+        ) =>
+          Date.parse(
+            right.submittedAt,
+          ) -
+          Date.parse(
+            left.submittedAt,
+          ),
+      );
+
   const activity:
     WalletActivityRecord[] =
     history
       .filter(
-        (item) =>
-          item.origin ===
-            normalizedWallet &&
-          item.sender ===
-            normalizedWallet &&
+        (item) => {
+          const submitted =
+            item.origin ===
+              normalizedWallet &&
+            item.sender ===
+              normalizedWallet;
+
+          const affectsPrincipal =
+            item.functionName ===
+              "review_version" &&
+            typeof item.policyId ===
+              "string" &&
+            principalPolicyIds.has(
+              item.policyId,
+            );
+
+          return (
+            (submitted ||
+              affectsPrincipal) &&
           typeof item.functionName ===
             "string" &&
           typeof item.policyId ===
             "string" &&
           ownedPolicyIds.has(
             item.policyId,
-          ),
+          )
+          );
+        },
       )
       .map(
         (item) => {
@@ -886,6 +1089,13 @@ export async function discoverWalletAccount(
             executionStatus:
               item.executionStatus,
             methodVerified: true,
+            relationship:
+              item.origin ===
+                  normalizedWallet &&
+                item.sender ===
+                  normalizedWallet
+                ? "submitted" as const
+                : "affected_principal" as const,
             submittedAt:
               timestamp,
             updatedAt:
@@ -917,5 +1127,6 @@ export async function discoverWalletAccount(
       latest,
     policies,
     activity,
+    principalReviewAlerts,
   };
 }

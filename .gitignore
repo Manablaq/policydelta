@@ -10,3 +10,4 @@ artifacts/
 node_modules/
 .next/
 *.before-*
+.vercel

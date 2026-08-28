@@ -30,11 +30,12 @@ PolicyDelta is a GenLayer Intelligent Contract and production application that d
 | Deployment transaction | [`0x66e01ac9797ebdf53a17fc56090bad546940adf3614350c362c711457b9b92ac`](https://explorer-bradbury.genlayer.com/tx/0x66e01ac9797ebdf53a17fc56090bad546940adf3614350c362c711457b9b92ac) |
 | Frozen contract SHA-256 | `a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2` |
 | Contract freeze commit | `69835a0` |
-| Verified frontend implementation commit | `34052de` |
-| Direct Mode contract regression | `22/22 PASS` |
-| Frontend browser regression | `26/26 PASS` |
+| Current production frontend commit (pre-remediation) | `34052de` |
+| Direct Mode contract regression | `30/30 PASS` |
+| Frontend browser regression | `28/28 PASS` |
 | Live Bradbury validation | Completed |
 | Account-history source | Bradbury-native reconstruction |
+| Appeal/finality remediation | Locally verified; production publish and live appeal evidence pending |
 
 ## The problem
 
@@ -157,6 +158,8 @@ V6 does **not** become authorized merely because semantic review completed.
 
 Historical PolicyDelta activity is reconstructed from real Bradbury transactions.
 
+Authority cards and authorization checks use Bradbury's explicit `LATEST_FINAL` snapshot. A separate `LATEST_NONFINAL` watcher inspects accepted `review_version` transactions affecting the connected principal, including reviews submitted by another account. An accepted automatic `NON_MATERIAL` activation is shown as provisional with the old/new text, transaction status, live appeal eligibility, minimum bond, and a native GenLayer appeal action.
+
 ![Verified PolicyDelta Bradbury activity](docs/assets/screenshots/activity.png)
 
 ### Deployment evidence
@@ -249,7 +252,7 @@ PolicyDelta deliberately separates:
 2. transaction execution result;
 3. application success.
 
-The frontend never treats `ACCEPTED` as finality.
+The frontend never treats `ACCEPTED` as finality or as enforceable authority.
 
 ```text
 FINALIZED + FINISHED_WITH_RETURN
@@ -259,10 +262,10 @@ FINALIZED + FINISHED_WITH_ERROR
     → finalized execution failure
 
 ACCEPTED
-    → not final
+    → provisional state + principal appeal path
 ```
 
-A transaction can therefore be finalized while still representing a failed contract execution.
+A transaction can therefore be finalized while still representing a failed contract execution. During the appeal window, the finalized snapshot remains the authority source even when the latest non-final snapshot contains an automatically activated replacement.
 
 PolicyDelta preserves that distinction in its Activity and transaction interfaces.
 
@@ -406,7 +409,7 @@ The resulting V2 is active and authorized with no open replacement.
 
 | Layer | Result |
 | --- | --- |
-| Direct Mode contract regression | `22/22 PASS` |
+| Direct Mode contract regression | `30/30 PASS` |
 | GenVM validation | PASS before source freeze |
 | Strict contract type validation | PASS before source freeze |
 | ABI generation | PASS |
@@ -416,7 +419,7 @@ The resulting V2 is active and authorized with no open replacement.
 | Live Bradbury lifecycle validation | PASS |
 | Frontend lint | PASS |
 | Next.js production build | PASS |
-| Frontend Playwright suite | `26/26 PASS` |
+| Frontend Playwright suite | `28/28 PASS` |
 | Real Bradbury account reconstruction | PASS |
 | Multi-wallet provider isolation | PASS |
 | Production Vercel deployment | LIVE |

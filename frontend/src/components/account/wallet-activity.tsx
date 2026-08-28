@@ -224,6 +224,13 @@ export function WalletActivity() {
                         10,
                       )}
                     </p>
+
+                    {item.relationship ===
+                      "affected_principal" && (
+                      <p className="mt-2 text-xs font-semibold text-[var(--warning)]">
+                        Submitted by another account · affects you as principal
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-2">

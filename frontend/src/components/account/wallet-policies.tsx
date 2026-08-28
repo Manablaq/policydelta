@@ -72,7 +72,7 @@ export function WalletPolicies() {
           </h2>
 
           <p className="mt-2 max-w-[720px] text-sm leading-6 text-[var(--muted)]">
-            PolicyDelta reconstructs this wallet&apos;s real transaction history from Bradbury, discovers its policies automatically, then reads their current authority directly from the deployed contract.
+            PolicyDelta reconstructs this wallet&apos;s real transaction history from Bradbury, discovers its policies automatically, then reads authority from finalized contract state. Accepted automatic reviews are watched separately for appeal.
           </p>
         </div>
 

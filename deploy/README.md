@@ -31,6 +31,12 @@ Consolidated validation summary:
 evidence/BRADBURY_VALIDATION_SUMMARY.md
 ```
 
+Appeal/finality remediation and remaining live checklist:
+
+```text
+evidence/APPEAL_FINALITY_VALIDATION.md
+```
+
 Source parity:
 
 ```text
@@ -121,7 +127,7 @@ FINALIZED + FINISHED_WITH_ERROR
 https://policydelta.vercel.app
 ```
 
-The application's Evidence page exposes the same Bradbury contract identity recorded here.
+The application's Evidence page exposes the same Bradbury contract identity recorded here. The current production frontend predates the locally verified appeal/finality remediation; publish and live validation status are tracked in `evidence/APPEAL_FINALITY_VALIDATION.md`.
 
 ## Related documentation
 

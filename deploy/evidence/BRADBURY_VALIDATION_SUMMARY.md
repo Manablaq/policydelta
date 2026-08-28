@@ -10,6 +10,29 @@
 
 `BRADBURY_SOURCE_PARITY.txt` records byte-identical source parity between the frozen local contract and the source retrieved from Bradbury.
 
+## Post-review appeal/finality remediation
+
+The deployed contract source remains byte-identical and unchanged. The reviewer-requested remediation is an integration safety boundary around GenLayer's existing appeal window:
+
+- enforcement-facing reads explicitly select `LATEST_FINAL`;
+- a separate `LATEST_NONFINAL` watcher finds accepted automatic reviews affecting the principal regardless of submitter;
+- the principal sees finalized and provisional policy text, consensus status, live `canAppeal`, and minimum appeal bond;
+- the connected principal can call GenLayerJS `appealTransaction` with that bond;
+- eight adversarial semantic cases cover disguised authority and obligation changes.
+
+Verified locally:
+
+```text
+Direct Mode: 30/30 PASS
+Frontend Playwright: 28/28 PASS
+Principal false-negative surfacing: PASS
+Principal wallet appeal submission: PASS
+Real Bradbury account reconstruction: PASS
+Contract SHA-256 unchanged: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
+```
+
+The historical evidence below remains valid. New production and live appeal-window evidence must not be inferred from local tests; its completion checklist is recorded in `APPEAL_FINALITY_VALIDATION.md`.
+
 ## Live validation gates
 
 ### Non-material change
