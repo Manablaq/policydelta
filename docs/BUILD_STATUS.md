@@ -105,10 +105,10 @@ deploy/evidence/BRADBURY_VALIDATION_SUMMARY.md
 https://policydelta.vercel.app
 ```
 
-Current production frontend commit (pre-remediation):
+Current production frontend commit:
 
 ```text
-34052de0841e54939c6119b0fee58c67e5e958bb
+628277b
 ```
 
 ## Frontend verification
@@ -121,7 +121,7 @@ Production build:
 PASS
 
 Playwright:
-28/28 PASS
+31/31 PASS
 
 Real Bradbury account reconstruction:
 PASS
@@ -130,10 +130,13 @@ Multi-provider wallet isolation:
 PASS
 
 Production deployment:
-LIVE — remediation publish pending
+LIVE — appeal/finality remediation published
 
-Appeal/finality remediation candidate:
-LOCAL PASS
+First live false-negative appeal:
+PASS — 11-validator appeal rejected the accepted NON_MATERIAL verdict
+
+Lineage-display correction found by live run:
+LOCAL PASS — publication and second accepted-window capture pending
 ```
 
 ## Account architecture
@@ -144,6 +147,6 @@ No private account database or manual historical import is required.
 
 ## Release readiness
 
-The implementation, local regressions, historical Bradbury validation, and reviewer-facing documentation are complete. Production publication and the live checklist in `deploy/evidence/APPEAL_FINALITY_VALIDATION.md` remain open.
+The remediation is published and the first live appeal-window run is complete. Before resubmission, publish the lineage-display correction and repeat the accepted-window capture to verify finalized V1 is displayed against provisional V2. The exact remaining gate is recorded in `deploy/evidence/APPEAL_FINALITY_VALIDATION.md`.
 
 No additional Intelligent Contract deployment is required because the remediation preserves the frozen deployed contract source and changes integration read/appeal behavior.

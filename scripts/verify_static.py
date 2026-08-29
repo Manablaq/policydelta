@@ -69,6 +69,14 @@ frontend_guards = {
         '"affected_principal"',
         discovery_source,
     ),
+    "accepted review alert boundary": (
+        "isActionablePrincipalReviewStatus",
+        discovery_source,
+    ),
+    "immutable previous-authority lineage": (
+        "provisional.parentVersion",
+        discovery_source,
+    ),
     "live appeal eligibility": (
         "canAppeal",
         appeal_source,
@@ -86,6 +94,11 @@ frontend_guards = {
 for name, (token, location) in frontend_guards.items():
     if token not in location:
         raise SystemExit(f"missing frontend safety guard ({name}): {token}")
+
+if "finalizedPolicy.activeVersion" in discovery_source:
+    raise SystemExit(
+        "principal alert must derive previous authority from version lineage"
+    )
 
 corpus = json.loads(CORPUS.read_text())
 if len(corpus) < 8:

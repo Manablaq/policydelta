@@ -23,7 +23,7 @@ If you are evaluating the project, use this order:
 | Contract | `0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E` |
 | Frozen SHA-256 | `a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2` |
 
-The current appeal/finality remediation is locally verified but not yet published to the production URL. See [`../deploy/evidence/APPEAL_FINALITY_VALIDATION.md`](../deploy/evidence/APPEAL_FINALITY_VALIDATION.md) for the remaining live checklist.
+The appeal/finality remediation is published and its first live false-negative appeal run is complete. That run exposed a previous-version display defect; see [`../deploy/evidence/APPEAL_FINALITY_VALIDATION.md`](../deploy/evidence/APPEAL_FINALITY_VALIDATION.md) for the correction and remaining accepted-window recapture.
 
 ## Documents
 
