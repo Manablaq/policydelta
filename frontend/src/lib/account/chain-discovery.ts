@@ -74,6 +74,31 @@ type DecodedHistoryItem = {
   timestampMs: number;
 };
 
+export function isActionablePrincipalReviewStatus(
+  consensusStatus: string,
+) {
+  return consensusStatus ===
+    "ACCEPTED";
+}
+
+export function previousAuthorityVersionForAlert(
+  reviewedVersion: number,
+  parentVersion: number,
+) {
+  if (
+    !Number.isSafeInteger(
+      parentVersion,
+    ) ||
+    parentVersion <= 0 ||
+    parentVersion >=
+      reviewedVersion
+  ) {
+    return null;
+  }
+
+  return parentVersion;
+}
+
 let eventCache:
   | {
       throughBlock: number;
@@ -899,10 +924,9 @@ export async function discoverWalletAccount(
             ) &&
             item.executionStatus ===
               "FINISHED_WITH_RETURN" &&
-            item.consensusStatus !==
-              "FINALIZED" &&
-            item.consensusStatus !==
-              "CANCELED",
+            isActionablePrincipalReviewStatus(
+              item.consensusStatus,
+            ),
         ),
         RPC_CONCURRENCY,
         async (
@@ -916,20 +940,12 @@ export async function discoverWalletAccount(
             item.version as number;
 
           try {
-            const [
-              provisional,
-              finalizedPolicy,
-            ] = await Promise.all([
-              readVersion(
+            const provisional =
+              await readVersion(
                 policyId,
                 version,
                 "provisional",
-              ),
-              readPolicy(
-                policyId,
-                "finalized",
-              ),
-            ]);
+              );
 
             if (
               provisional.status !==
@@ -941,10 +957,28 @@ export async function discoverWalletAccount(
               return null;
             }
 
+            // The reviewed version's parent is the authority it was
+            // proposed against. Derive the comparison from that immutable
+            // lineage instead of a moving policy-head read: on Bradbury an
+            // accepted automatic activation can already appear at the head
+            // while it is still inside the appeal window.
+            const previousFinalizedVersion =
+              previousAuthorityVersionForAlert(
+                version,
+                provisional.parentVersion,
+              );
+
+            if (
+              previousFinalizedVersion ===
+              null
+            ) {
+              return null;
+            }
+
             const previousFinalized =
               await readVersion(
                 policyId,
-                finalizedPolicy.activeVersion,
+                previousFinalizedVersion,
                 "finalized",
               );
 
@@ -984,7 +1018,7 @@ export async function discoverWalletAccount(
               policyId,
               version,
               previousFinalizedVersion:
-                finalizedPolicy.activeVersion,
+                previousFinalizedVersion,
               previousFinalizedPolicyText:
                 previousFinalized.policyText,
               provisionalPolicyText:

@@ -24,14 +24,14 @@ Verified locally:
 
 ```text
 Direct Mode: 30/30 PASS
-Frontend Playwright: 28/28 PASS
+Frontend Playwright: 31/31 PASS
 Principal false-negative surfacing: PASS
 Principal wallet appeal submission: PASS
 Real Bradbury account reconstruction: PASS
 Contract SHA-256 unchanged: a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2
 ```
 
-The historical evidence below remains valid. New production and live appeal-window evidence must not be inferred from local tests; its completion checklist is recorded in `APPEAL_FINALITY_VALIDATION.md`.
+The historical evidence below remains valid. The first live false-negative appeal run is recorded in `live/appeal-finality/LIVE_APPEAL_RUN_2026-08-28.md`: the principal alert exposed `canAppeal = true`, the principal appealed a provisionally accepted `NON_MATERIAL` verdict, an 11-validator appeal round unanimously rejected it, and V1 remained authorized while V2 returned to `PROPOSED`. The run also exposed a previous-version display defect; its correction and required second accepted-window capture are tracked in `APPEAL_FINALITY_VALIDATION.md`.
 
 ## Live validation gates
 

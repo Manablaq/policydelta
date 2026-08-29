@@ -173,7 +173,7 @@ npm run test:e2e
 Verified browser suite:
 
 ```text
-28/28 PASS
+31/31 PASS
 ```
 
 ## Browser coverage

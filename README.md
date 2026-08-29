@@ -30,12 +30,12 @@ PolicyDelta is a GenLayer Intelligent Contract and production application that d
 | Deployment transaction | [`0x66e01ac9797ebdf53a17fc56090bad546940adf3614350c362c711457b9b92ac`](https://explorer-bradbury.genlayer.com/tx/0x66e01ac9797ebdf53a17fc56090bad546940adf3614350c362c711457b9b92ac) |
 | Frozen contract SHA-256 | `a0721813dd17d01b1d5cc57e9ac455152b6d4eba9daccff2d210d707835b70b2` |
 | Contract freeze commit | `69835a0` |
-| Current production frontend commit (pre-remediation) | `34052de` |
+| Current production frontend commit | `628277b` |
 | Direct Mode contract regression | `30/30 PASS` |
-| Frontend browser regression | `28/28 PASS` |
+| Frontend browser regression | `31/31 PASS` |
 | Live Bradbury validation | Completed |
 | Account-history source | Bradbury-native reconstruction |
-| Appeal/finality remediation | Locally verified; production publish and live appeal evidence pending |
+| Appeal/finality remediation | Published; first live appeal completed; lineage-display correction pending publication and recapture |
 
 ## The problem
 
@@ -419,7 +419,7 @@ The resulting V2 is active and authorized with no open replacement.
 | Live Bradbury lifecycle validation | PASS |
 | Frontend lint | PASS |
 | Next.js production build | PASS |
-| Frontend Playwright suite | `28/28 PASS` |
+| Frontend Playwright suite | `31/31 PASS` |
 | Real Bradbury account reconstruction | PASS |
 | Multi-wallet provider isolation | PASS |
 | Production Vercel deployment | LIVE |

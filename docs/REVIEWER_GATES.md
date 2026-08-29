@@ -106,18 +106,20 @@ Verified:
 Verified:
 
 ```text
-28/28 PASS
+31/31 PASS
 ```
 
 ## Post-review live evidence
 
 - [x] Local false-negative surfacing regression passes.
 - [x] Local wallet appeal-submission regression passes.
-- [ ] Production frontend containing the remediation is deployed.
-- [ ] A Bradbury accepted `NON_MATERIAL` false-negative scenario is captured during its appeal window.
-- [ ] The principal's live alert and appeal transaction are recorded with hashes/screenshots.
+- [x] Production frontend containing the remediation is deployed.
+- [x] A Bradbury accepted `NON_MATERIAL` false-negative scenario was observed during its appeal window.
+- [x] The principal's live alert fields, appeal target transaction, and appeal outcome are recorded.
+- [ ] Publish the lineage-display correction found by the live run.
+- [ ] Repeat the accepted-window capture with finalized V1 and provisional V2 displayed correctly.
 
-Unchecked items must be completed before claiming the review request is fully closed on the live deployment.
+The remaining unchecked items must be completed before claiming the review request is fully closed on the live deployment. No wallet-connected accepted-window screenshot exists for the first run, so the durable evidence explicitly identifies its API-capture boundary.
 
 ## Account architecture
 
