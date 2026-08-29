@@ -51,7 +51,7 @@ Adversarial corpus:
 tests/corpus/adversarial_semantic_regressions.json
 ```
 
-## Live Bradbury validation — first run complete
+## Live Bradbury validation — complete
 
 Durable run notes are recorded in:
 
@@ -70,8 +70,9 @@ deploy/evidence/live/appeal-finality/LIVE_APPEAL_RUN_2026-08-28.md
 - [x] Record the appeal target transaction and contract explorer link. No separate appeal hash was printed by the CLI, so none is claimed.
 - [x] Record the unanimous 11-validator appeal outcome.
 - [x] Record the final authority state after the appealed transaction resolved: V1 authorized, V2 unauthorized and returned to `PROPOSED`.
-- [ ] Deploy the lineage correction found by the live run.
-- [ ] Repeat the accepted-window capture and verify the warning displays finalized V1 against provisional V2.
+- [x] Deploy the lineage correction found by the live run in production commit `56da646`.
+- [x] Add and pass direct alert regressions proving V3 resolves its previous authority from immutable `parent_version = 1`, malformed lineage fails closed, and only `ACCEPTED` reviews are actionable.
+- [x] Repeat the adversarial change live after production deployment. The new validator round correctly returned `OBLIGATION_CHANGE` with re-consent required, so no second false-negative alert or appeal was appropriate.
 
 ## Evidence slots
 
@@ -92,4 +93,4 @@ Explorer: https://explorer-bradbury.genlayer.com/address/0x034eA00BFca3a7dBa0DBD
 
 ## Claim boundary
 
-The first live run proves timely principal discovery, live appeal eligibility, principal appeal submission, a larger validator round, and rollback to the prior authority. It also found a production alert-comparison defect. Resubmission should wait until the lineage correction is deployed and the V1-versus-V2 accepted-window display is reverified live.
+The first live run proves timely principal discovery, live appeal eligibility, principal appeal submission, a larger validator round, and rollback to the prior authority. The comparison defect found by that run is deployed and protected by direct regressions. The post-deployment live repetition correctly classified the adversarial edit as `OBLIGATION_CHANGE`, left V1 authorized, and left V3 unauthorized pending explicit consent. A second live false negative was not manufactured or claimed.

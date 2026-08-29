@@ -94,6 +94,35 @@ The incorrectly accepted automatic activation therefore did not become the durab
 - The accepted-window API fields were observed live but no wallet-connected screenshot was captured; the available in-app browser had no wallet provider.
 - No separate appeal EVM hash is claimed because the CLI returned the appealed GenLayer transaction ID rather than a distinct hash.
 - The post-appeal production endpoint observation was repeated on 2026-08-29 with a scan through Bradbury block `19560017`.
-- A second accepted-window run is required after deploying the lineage fix to capture V1 and V2 correctly side by side in production.
+- Production commit `56da646` deploys the lineage fix. Direct browser regressions prove that a reviewed V3 with `parent_version = 1` displays V1 as the prior authority and that only `ACCEPTED` reviews are actionable.
+
+## Post-deployment live repetition — 2026-08-29
+
+The same modal-obligation-weakening edit was repeated after production commit `56da646` was `READY` at the stable URL.
+
+| Event | GenLayer transaction ID | Observed result |
+| --- | --- | --- |
+| Recover expired V2 | `0x97cb7ae781bf42c3f113f4b4d622a432a92443127759974639fac7cd8b447be5` | Accepted with five agreeing validators. |
+| Propose V3 | `0xe1df7000f95523f4d72e2aeb70324c80f25b861fe93e4eb8fcbd42e131c394e8` | Accepted; V3 records `parent_version = 1`. |
+| Initial V3 review | `0x7281b21e6cab6278fe49f25103cde8e6029899dd8d2969850bee746b4b20142c` | Returned the safe `OBLIGATION_CHANGE` semantic output but ended `UNDETERMINED` after validator timeouts. |
+| Publisher V3 retry | `0x9454677b377263a95729e52acdf0ee8c5dfdab4099433dba2b6141790d7dfd5a` | `ACCEPTED / FINISHED_WITH_RETURN`; five validators unanimously agreed on `OBLIGATION_CHANGE` and `requires_reconsent = true`. |
+| Competing principal retry | `0x7794bd05efb8a14f798dedee7d0a014520285444f2b714d96b5af17dfd0d219e` | `ACCEPTED / FINISHED_WITH_ERROR` after the publisher review had already changed V3 to a non-reviewable state; no authority change. |
+
+The production principal endpoint attributed the publisher reviews to the affected principal. It correctly returned no `principalReviewAlerts` entry because the accepted publisher retry was material and required consent, not an automatic `NON_MATERIAL` activation.
+
+Post-review contract reads:
+
+```text
+active_version: 1
+open_version: 3
+V3 parent_version: 1
+V3 status: AWAITING_CONSENT
+V3 change_class: OBLIGATION_CHANGE
+V3 requires_reconsent: true
+is_version_authorized(V1): true
+is_version_authorized(V3): false
+```
+
+This repetition validates the strengthened adversarial semantic path in production. It does not claim a second false negative: validators correctly caught the authority change, so generating an appeal warning would itself have been incorrect.
 
 Explorer address: <https://explorer-bradbury.genlayer.com/address/0x034eA00BFca3a7dBa0DBD72398aE5ddb5237e17E>
