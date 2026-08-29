@@ -116,10 +116,11 @@ Verified:
 - [x] Production frontend containing the remediation is deployed.
 - [x] A Bradbury accepted `NON_MATERIAL` false-negative scenario was observed during its appeal window.
 - [x] The principal's live alert fields, appeal target transaction, and appeal outcome are recorded.
-- [ ] Publish the lineage-display correction found by the live run.
-- [ ] Repeat the accepted-window capture with finalized V1 and provisional V2 displayed correctly.
+- [x] Publish the lineage-display correction found by the live run.
+- [x] Protect the V1-versus-provisional lineage display with direct fail-closed regressions.
+- [x] Repeat the adversarial edit live after deployment; validators correctly returned `OBLIGATION_CHANGE`, so no false-negative alert was emitted.
 
-The remaining unchecked items must be completed before claiming the review request is fully closed on the live deployment. No wallet-connected accepted-window screenshot exists for the first run, so the durable evidence explicitly identifies its API-capture boundary.
+No wallet-connected accepted-window screenshot exists for the first run, so the durable evidence explicitly identifies its API-capture boundary. The API fields, appeal transaction, unanimous larger round, deployed correction, direct lineage regression, and post-fix live material verdict are all recorded without claiming a second false negative.
 
 ## Account architecture
 

@@ -108,7 +108,7 @@ https://policydelta.vercel.app
 Current production frontend commit:
 
 ```text
-628277b
+56da646
 ```
 
 ## Frontend verification
@@ -136,7 +136,10 @@ First live false-negative appeal:
 PASS — 11-validator appeal rejected the accepted NON_MATERIAL verdict
 
 Lineage-display correction found by live run:
-LOCAL PASS — publication and second accepted-window capture pending
+PRODUCTION PASS — direct regression protected
+
+Post-fix live adversarial repetition:
+PASS — OBLIGATION_CHANGE, re-consent required, V1 authorized, V3 unauthorized
 ```
 
 ## Account architecture
@@ -147,6 +150,6 @@ No private account database or manual historical import is required.
 
 ## Release readiness
 
-The remediation is published and the first live appeal-window run is complete. Before resubmission, publish the lineage-display correction and repeat the accepted-window capture to verify finalized V1 is displayed against provisional V2. The exact remaining gate is recorded in `deploy/evidence/APPEAL_FINALITY_VALIDATION.md`.
+The remediation and lineage correction are published. The first live run proves false-negative surfacing and appeal; the post-fix repetition correctly classified the same authority change as `OBLIGATION_CHANGE` and kept V3 unauthorized pending consent. The evidence boundary is recorded in `deploy/evidence/APPEAL_FINALITY_VALIDATION.md`.
 
 No additional Intelligent Contract deployment is required because the remediation preserves the frozen deployed contract source and changes integration read/appeal behavior.
